@@ -4,6 +4,7 @@ import {
 	EditorPosition,
 	EditorSelectionOrCaret,
 	Modal,
+	Notice,
 	Plugin,
 	View,
 } from "obsidian";
@@ -53,9 +54,12 @@ export default class MyPlugin extends Plugin {
 
 class CursorsModal extends Modal {
 	editor: Editor;
+	regexQ: boolean;
+
 	constructor(app: App, editor: Editor) {
 		super(app);
 		this.editor = editor;
+		this.regexQ = true;
 	}
 
 	async getSelectionAndOffset() {
@@ -70,8 +74,22 @@ class CursorsModal extends Modal {
 		}
 	}
 
-	getSelectionsFromQuery(content: string, offset: number, query: string) {
-		const regex = new RegExp(query, "g");
+	getSelectionsFromQuery(
+		content: string,
+		offset: number,
+		query: string,
+		regexQ: boolean
+	) {
+		let regex: RegExp;
+		if (regexQ) {
+			regex = new RegExp(query, "g");
+		} else {
+			regex = new RegExp(
+				query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
+				"g"
+			);
+		}
+
 		const lines = content.split("\n");
 		const selections: EditorSelectionOrCaret[] = [];
 
@@ -104,13 +122,15 @@ class CursorsModal extends Modal {
 		const { selection, offset } = await this.getSelectionAndOffset();
 		console.log({ selection });
 
-		const inputEl = contentEl.createEl("input", {
+		const inputDiv = contentEl.createDiv({ cls: "inputDiv" });
+
+		const inputEl = inputDiv.createEl("input", {
 			type: "text",
 			title: "Search Query",
 			attr: { placeholder: "Search Query" },
 		});
 
-		const submitButton = contentEl.createEl(
+		const submitButton = inputDiv.createEl(
 			"input",
 			{
 				type: "submit",
@@ -118,19 +138,47 @@ class CursorsModal extends Modal {
 			},
 			(submitEl) => {
 				submitEl.addEventListener("click", async () => {
-					const query = inputEl.value;
-					const selections = this.getSelectionsFromQuery(
-						selection,
-						offset,
-						query
-					);
+					try {
+						const query = inputEl.value;
+						console.log(this.regexQ);
+						const selections = this.getSelectionsFromQuery(
+							selection,
+							offset,
+							query,
+							this.regexQ
+						);
 
-					console.log({ selections });
-					this.editor.setSelections(selections);
-					this.close();
+						console.log({ selections });
+						this.editor.setSelections(selections);
+						this.close();
+					} catch (error) {
+						console.log(error);
+						new Notice(
+							"Something went wrong, check the console for the error."
+						);
+					}
 				});
 			}
 		);
+
+		const optionsDiv = contentEl.createDiv({ cls: "optionsDiv" });
+
+		optionsDiv.createEl(
+			"input",
+			{
+				type: "checkbox",
+				attr: { name: "regexQ", checked: this.regexQ },
+			},
+			(regexQInput) => {
+				regexQInput.addEventListener("change", () => {
+					this.regexQ = regexQInput.checked;
+				});
+			}
+		);
+		optionsDiv.createEl("label", {
+			text: "Regex?",
+			attr: { for: "regexQ" },
+		});
 	}
 
 	onClose() {
