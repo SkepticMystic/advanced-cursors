@@ -70,18 +70,22 @@ export default class MyPlugin extends Plugin {
 		const currOffset = editor.posToOffset(lastSelection.head);
 
 		const nextI = content.indexOf(currSelection, currOffset);
-		const iInEntireStr = nextI + currOffset;
 
-		console.log({ currSelection, currOffset, nextI, iInEntireStr });
+		console.log({ currSelection, currOffset, nextI });
 
 		if (nextI > -1) {
-			const { line } = lastSelection.head;
+			const nextPos = editor.offsetToPos(nextI);
+
+			const { line, ch } = nextPos;
+
+			editor.getLine(line);
+
 			const anchor: EditorPosition = {
-				ch: nextI,
+				ch,
 				line,
 			};
 			const head: EditorPosition = {
-				ch: nextI + currSelection.length,
+				ch: ch + currSelection.length,
 				line,
 			};
 
