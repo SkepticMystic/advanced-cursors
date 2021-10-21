@@ -13,7 +13,7 @@ interface Settings {
 }
 
 const DEFAULT_SETTINGS: Settings = {
-  savedQueries: [],
+  savedQueries: [{name: 'name', query: 'query'}],
 };
 
 export default class MyPlugin extends Plugin {
