@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.7...0.0.8) (2021-10-21)
+
+
+### Bug Fixes
+
+* :bug: Works over multiple lines ([16aa555](https://github.com/SkepticMystic/advanced-cursors/commit/16aa55545ae1dd076c7b40a8eb7d61256cb9bb62))
+
 ### [0.0.7](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.6...0.0.7) (2021-10-21)
 
 
