@@ -1,4 +1,5 @@
-import { App, Modal, Notice, PluginSettingTab } from "obsidian";
+import { App, Editor, Modal, Notice, PluginSettingTab } from "obsidian";
+import { CursorsModal } from "src/CursorsModal";
 import type MyPlugin from "src/main";
 
 export class SettingTab extends PluginSettingTab {
@@ -14,7 +15,7 @@ export class SettingTab extends PluginSettingTab {
     this.plugin.settings.savedQueries.forEach((savedQ, i) => {
       const savedQDiv = savedQsDiv.createDiv({ cls: "savedQ" });
       savedQDiv.createSpan({ text: savedQ.name, cls: "savedQ-name" });
-      savedQDiv.createSpan({ text: ": " });
+      savedQDiv.createSpan({ text: " → " });
       savedQDiv.createSpan({ text: savedQ.query });
 
       const deleteQ = savedQDiv.createEl("button", {
@@ -31,10 +32,14 @@ export class SettingTab extends PluginSettingTab {
   removeSavedQ = async (i: number) => {
     const { settings } = this.plugin;
     const copy = [...settings.savedQueries];
-    copy.splice(i, 1);
+    const removedQ = copy.splice(i, 1);
     settings.savedQueries = copy;
     await this.plugin.saveSettings();
     console.log(settings.savedQueries, copy);
+
+    const { name, query } = removedQ[0];
+
+    this.app.commands.removeCommand(`advanced-cursors:AC-${name}: ${query}`);
   };
 
   display(): void {
@@ -105,6 +110,21 @@ export class AddQModal extends Modal {
             console.log(this.plugin.settings.savedQueries);
             new Notice(`${name}: ${query} added.`);
             this.settingsTab.initExistingSavedQs(this.savedQsDiv);
+
+            this.plugin.addCommand({
+              id: `AC-${name}: ${query}`,
+              name: `Run query: ${name} → ${query}`,
+              editorCallback: async (editor: Editor) => {
+                const cursorModal = new CursorsModal(
+                  this.app,
+                  editor,
+                  this.plugin
+                );
+                const { selection, offset } =
+                  await cursorModal.getSelectionAndOffset();
+                cursorModal.submit(query, selection, offset, true);
+              },
+            });
             this.close();
           }
         });

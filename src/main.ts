@@ -13,7 +13,7 @@ interface Settings {
 }
 
 const DEFAULT_SETTINGS: Settings = {
-  savedQueries: [{name: 'name', query: 'query'}],
+  savedQueries: [{ name: "name", query: "query" }],
 };
 
 export default class MyPlugin extends Plugin {
@@ -30,6 +30,20 @@ export default class MyPlugin extends Plugin {
       editorCallback: (editor: Editor) => {
         new CursorsModal(this.app, editor, this).open();
       },
+    });
+
+    this.settings.savedQueries.forEach((savedQ) => {
+      const { name, query } = savedQ;
+      this.addCommand({
+        id: `AC-${name}: ${query}`,
+        name: `Run query: ${name} → ${query}`,
+        editorCallback: async (editor: Editor) => {
+          const cursorModal = new CursorsModal(this.app, editor, this);
+          const { selection, offset } =
+            await cursorModal.getSelectionAndOffset();
+          cursorModal.submit(query, selection, offset, true);
+        },
+      });
     });
 
     this.addCommand({

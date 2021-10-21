@@ -46,7 +46,7 @@
       >
         {savedQ.name}
       </span>
-      <span>: </span>
+      <span>→</span>
       <span
         class="savedQ-query"
         on:click={async (e) => {
@@ -64,5 +64,4 @@
 </div>
 
 <style>
-  
 </style>
