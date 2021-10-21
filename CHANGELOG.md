@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.11...0.0.12) (2021-10-21)
+
+
+### Features
+
+* :sparkles: Add a new command for each saved query ([2b43f4b](https://github.com/SkepticMystic/advanced-cursors/commit/2b43f4b6cfea1679bc02b2470816ccc5abf48ea3))
+
 ### [0.0.11](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.10...0.0.11) (2021-10-21)
 
 
