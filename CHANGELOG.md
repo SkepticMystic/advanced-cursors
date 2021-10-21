@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.6...0.0.7) (2021-10-21)
+
+
+### Features
+
+* :sparkles: fixes [#2](https://github.com/SkepticMystic/advanced-cursors/issues/2): Append next instance of current selection to selections ([9e6dc5e](https://github.com/SkepticMystic/advanced-cursors/commit/9e6dc5eaa807f292f9fda7592f051741249d3c82))
+
 ### [0.0.6](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.5...0.0.6) (2021-10-21)
 
 
