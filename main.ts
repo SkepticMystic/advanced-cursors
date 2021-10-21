@@ -129,6 +129,7 @@ class CursorsModal extends Modal {
 			title: "Search Query",
 			attr: { placeholder: "Search Query" },
 		});
+		inputEl.focus()
 
 		const submitButton = inputDiv.createEl(
 			"input",
