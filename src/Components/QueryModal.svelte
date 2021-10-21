@@ -28,13 +28,35 @@
   <label for="regexQ">Regex?</label>
 </div>
 
-<div class="saved">
+<div class="savedQ">
   {#each plugin.settings.savedQueries as savedQ}
     <div>
-      <span>
+      <span
+        class="savedQ-name"
+        on:click={async (e) => {
+          console.log(e);
+          const name = e.target.textContent;
+          const { query } = plugin.settings.savedQueries.find(
+            (savedQ) => savedQ.name === name
+          );
+          console.log({ query });
+          const { selection, offset } = await modal.getSelectionAndOffset();
+          modal.submit(query, selection, offset, regexQEl.checked);
+        }}
+      >
         {savedQ.name}
       </span>
-      <span>
+      <span>: </span>
+      <span
+        class="savedQ-query"
+        on:click={async (e) => {
+          console.log(e);
+          const query = e.target.textContent;
+          console.log({ query });
+          const { selection, offset } = await modal.getSelectionAndOffset();
+          modal.submit(query, selection, offset, regexQEl.checked);
+        }}
+      >
         {savedQ.query}
       </span>
     </div>
@@ -42,6 +64,5 @@
 </div>
 
 <style>
-  .saved {
-  }
+  
 </style>

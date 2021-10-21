@@ -1,1 +1,18 @@
 /* Sets all the text color to red! */
+.savedQ {
+  padding: 10px 3px;
+}
+
+.deleteQButton {
+  float: right;
+}
+
+.savedQ-name {
+  background-color: var(--background-secondary-alt);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.savedQ-name:hover {
+  background-color: var(--interactive-accent);
+}

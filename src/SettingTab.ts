@@ -13,10 +13,14 @@ export class SettingTab extends PluginSettingTab {
     savedQsDiv.empty();
     this.plugin.settings.savedQueries.forEach((savedQ, i) => {
       const savedQDiv = savedQsDiv.createDiv({ cls: "savedQ" });
-      savedQDiv.createSpan({ text: `${savedQ.name}: ` });
-      savedQDiv.createSpan({ text: `${savedQ.query}` });
+      savedQDiv.createSpan({ text: savedQ.name, cls: "savedQ-name" });
+      savedQDiv.createSpan({ text: ": " });
+      savedQDiv.createSpan({ text: savedQ.query });
 
-      const deleteQ = savedQDiv.createEl("button", { text: "X" });
+      const deleteQ = savedQDiv.createEl("button", {
+        text: "X",
+        cls: "deleteQButton",
+      });
       deleteQ.addEventListener("click", async () => {
         savedQDiv.remove();
         this.removeSavedQ(i);
@@ -83,26 +87,28 @@ export class AddQModal extends Modal {
       type: "text",
       attr: { placeholder: "query" },
     });
-    contentEl.createEl("button", { text: "Add new query" }, (but) => {
-      but.addEventListener("click", async () => {
-        const name = nameEl.value;
-        const query = queryEl.value;
+    contentEl
+      .createDiv()
+      .createEl("button", { text: "Add new query" }, (but) => {
+        but.addEventListener("click", async () => {
+          const name = nameEl.value;
+          const query = queryEl.value;
 
-        if (savedQueries.findIndex((q) => q.name === name) > -1) {
-          new Notice(`A query with name: ${name} already exists`);
-        } else {
-          this.plugin.settings.savedQueries.push({
-            name,
-            query,
-          });
-          await this.plugin.saveSettings();
-          console.log(this.plugin.settings.savedQueries);
-          new Notice(`${name}: ${query} added.`);
-          this.settingsTab.initExistingSavedQs(this.savedQsDiv);
-          this.close();
-        }
+          if (savedQueries.findIndex((q) => q.name === name) > -1) {
+            new Notice(`A query with name: ${name} already exists`);
+          } else {
+            this.plugin.settings.savedQueries.push({
+              name,
+              query,
+            });
+            await this.plugin.saveSettings();
+            console.log(this.plugin.settings.savedQueries);
+            new Notice(`${name}: ${query} added.`);
+            this.settingsTab.initExistingSavedQs(this.savedQsDiv);
+            this.close();
+          }
+        });
       });
-    });
   }
 
   onClose() {
