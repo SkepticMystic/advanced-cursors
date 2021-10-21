@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.4...0.0.5) (2021-10-21)
+
+
+### Features
+
+* :sparkles: Notice for number of matches found ([d341daf](https://github.com/SkepticMystic/advanced-cursors/commit/d341dafe81b2a30f10df1c05ae93aa43f71d6597))
+
 ### [0.0.4](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.3...0.0.4) (2021-10-20)
 
 
