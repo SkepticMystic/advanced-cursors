@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.10...0.0.11) (2021-10-21)
+
+
+### Features
+
+* :sparkles: List saved queries under cursorsModal ([c014bb2](https://github.com/SkepticMystic/advanced-cursors/commit/c014bb2a68b61145fd9e7724a9e2e4c2b7f1efa2))
+* :sparkles: Settings tab to add saved queries ([316b710](https://github.com/SkepticMystic/advanced-cursors/commit/316b7105982e7fcf4d6655c2319d2ab7ab0cda84))
+
 ### [0.0.10](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.9...0.0.10) (2021-10-21)
 
 ### [0.0.9](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.8...0.0.9) (2021-10-21)
