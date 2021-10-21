@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.13](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.12...0.0.13) (2021-10-21)
+
+
+### Features
+
+* :sparkles: RegexQ and flags for saved queries ([ec5353a](https://github.com/SkepticMystic/advanced-cursors/commit/ec5353a2481bd193634cbaf8d0198763de1993d7))
+
 ### [0.0.12](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.11...0.0.12) (2021-10-21)
 
 
