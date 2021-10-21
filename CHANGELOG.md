@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.5...0.0.6) (2021-10-21)
+
+
+### Features
+
+* :sparkles: Move to next instance of current selection ([10dd6c7](https://github.com/SkepticMystic/advanced-cursors/commit/10dd6c754854919b1e574dd63994d57d840777f3))
+* :sparkles: Notice if no next instance is found ([b44ec1e](https://github.com/SkepticMystic/advanced-cursors/commit/b44ec1eebea94d50c03fbc8928c0244a05247039))
+
+
+### Bug Fixes
+
+* :bug: Fixes [#1](https://github.com/SkepticMystic/advanced-cursors/issues/1): Focus inputEl onOpen ([5a23935](https://github.com/SkepticMystic/advanced-cursors/commit/5a23935bd0e65cf4124349b0b07168b42c708c36))
+
 ### [0.0.5](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.4...0.0.5) (2021-10-21)
 
 
