@@ -149,6 +149,8 @@ class CursorsModal extends Modal {
 						);
 
 						console.log({ selections });
+						new Notice(`${selections.length} matches found.`);
+						
 						this.editor.setSelections(selections);
 						this.close();
 					} catch (error) {
