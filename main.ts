@@ -42,6 +42,15 @@ export default class MyPlugin extends Plugin {
 				this.selectNextInstance(editor);
 			},
 		});
+
+		this.addCommand({
+			id: "add-next-match-to-selections",
+			name: "Add next instance of current selection to selections",
+			editorCallback: async (editor: Editor) => {
+				this.selectNextInstance(editor, true);
+			},
+		});
+
 		this.addSettingTab(new SettingTab(this.app, this));
 	}
 
@@ -49,17 +58,24 @@ export default class MyPlugin extends Plugin {
 		const currFile = this.app.workspace.getActiveFile();
 		const content = await this.app.vault.read(currFile);
 
-		const currSelection = editor.getSelection();
-		const currPos = editor.getCursor("to");
+		// const currSelection = editor.getSelection();
 
-		const currOffset = editor.posToOffset(currPos);
+		const lastSelection = editor.listSelections().last();
+		console.log({ lastSelection });
+		const currSelection = editor.getRange(
+			lastSelection.anchor,
+			lastSelection.head
+		);
+
+		const currOffset = editor.posToOffset(lastSelection.head);
 
 		const nextI = content.indexOf(currSelection, currOffset);
+		const iInEntireStr = nextI + currOffset;
 
-		console.log({ currSelection, currOffset, nextI });
+		console.log({ currSelection, currOffset, nextI, iInEntireStr });
 
 		if (nextI > -1) {
-			const { line } = currPos;
+			const { line } = lastSelection.head;
 			const anchor: EditorPosition = {
 				ch: nextI,
 				line,
@@ -72,7 +88,13 @@ export default class MyPlugin extends Plugin {
 			if (appendQ) {
 				const currSelections: EditorSelectionOrCaret[] =
 					editor.listSelections();
-				currSelections.push({ anchor, head });
+
+				const reconstructedSelections =
+					this.reconstructCurrentSelections(currSelections);
+				reconstructedSelections.push({ anchor, head });
+
+				editor.setSelections(reconstructedSelections);
+
 				console.log(editor.listSelections());
 			} else {
 				editor.setSelections([{ anchor, head }]);
@@ -81,6 +103,17 @@ export default class MyPlugin extends Plugin {
 		} else {
 			new Notice(`Cannot find next instance of ${currSelection}`);
 		}
+	}
+
+	reconstructCurrentSelections(selections: EditorSelectionOrCaret[]) {
+		const newSelections: EditorSelectionOrCaret[] = [];
+		selections.forEach((selection) => {
+			newSelections.push({
+				anchor: selection.anchor,
+				head: selection.head,
+			});
+		});
+		return newSelections;
 	}
 
 	onunload() {}
