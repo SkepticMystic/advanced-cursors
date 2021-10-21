@@ -2,6 +2,7 @@ import {
 	App,
 	Editor,
 	EditorPosition,
+	EditorRange,
 	EditorSelectionOrCaret,
 	Modal,
 	Notice,
@@ -22,19 +23,65 @@ export default class MyPlugin extends Plugin {
 	settings: Settings;
 
 	async onload() {
+		console.log("Loading advanced cursors");
+
 		await this.loadSettings();
 
-		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
 			id: "open-sample-modal-simple",
 			name: "Open sample modal (simple)",
 			editorCallback: (editor: Editor, view: View) => {
-				const query = "test";
 				new CursorsModal(this.app, editor).open();
 			},
 		});
-		// This adds a settings tab so the user can configure various aspects of the plugin
+
+		this.addCommand({
+			id: "move-to-next-match",
+			name: "Move to next instance of current selection",
+			editorCallback: async (editor: Editor) => {
+				this.selectNextInstance(editor);
+			},
+		});
 		this.addSettingTab(new SettingTab(this.app, this));
+	}
+
+	async selectNextInstance(editor: Editor) {
+		const currFile = this.app.workspace.getActiveFile();
+		const content = await this.app.vault.read(currFile);
+
+		const currSelection = editor.getSelection();
+		const currPos = editor.getCursor("to");
+
+		console.log({ content, currSelection, currPos });
+
+		const currSelections: EditorSelectionOrCaret[] =
+			editor.listSelections();
+		const currOffset = editor.posToOffset(currPos);
+
+		// const slice = content.slice(currOffset);
+
+		const nextI = content.indexOf(currSelection, currOffset);
+
+		console.log({ currOffset, nextI });
+
+		if (nextI > -1) {
+			const ch = nextI;
+			const { line } = currPos;
+			const anchor: EditorPosition = {
+				ch,
+				line,
+			};
+			const head: EditorPosition = {
+				ch: ch + currSelection.length,
+				line,
+			};
+
+			currSelections.push({ anchor, head });
+			console.log({ anchor, head, currSelections });
+
+			editor.setSelections([{ anchor, head }]);
+			console.log(editor.listSelections());
+		}
 	}
 
 	onunload() {}
@@ -129,7 +176,7 @@ class CursorsModal extends Modal {
 			title: "Search Query",
 			attr: { placeholder: "Search Query" },
 		});
-		inputEl.focus()
+		inputEl.focus();
 
 		const submitButton = inputDiv.createEl(
 			"input",
@@ -151,7 +198,7 @@ class CursorsModal extends Modal {
 
 						console.log({ selections });
 						new Notice(`${selections.length} matches found.`);
-						
+
 						this.editor.setSelections(selections);
 						this.close();
 					} catch (error) {
