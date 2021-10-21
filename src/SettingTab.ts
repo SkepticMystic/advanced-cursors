@@ -1,9 +1,10 @@
-import { App, Editor, Modal, Notice, PluginSettingTab } from "obsidian";
-import { CursorsModal } from "src/CursorsModal";
+import { App, Modal, PluginSettingTab } from "obsidian";
 import type MyPlugin from "src/main";
+import AddQComponent from "./Components/AddQComponent.svelte";
 
 export class SettingTab extends PluginSettingTab {
   plugin: MyPlugin;
+  savedQsDiv: HTMLDivElement;
 
   constructor(app: App, plugin: MyPlugin) {
     super(app, plugin);
@@ -54,13 +55,13 @@ export class SettingTab extends PluginSettingTab {
       (but) => {
         but.addEventListener("click", () => {
           console.log("clicked");
-          new AddQModal(this.app, this.plugin, this, savedQsDiv).open();
+          new AddQModal(this.app, this.plugin, this, this.savedQsDiv).open();
         });
       }
     );
-    const savedQsDiv = containerEl.createDiv({ cls: "savedQs" });
+    this.savedQsDiv = containerEl.createDiv({ cls: "savedQs" });
 
-    this.initExistingSavedQs(savedQsDiv);
+    this.initExistingSavedQs(this.savedQsDiv);
   }
 }
 
@@ -83,52 +84,16 @@ export class AddQModal extends Modal {
 
   async onOpen() {
     let { contentEl } = this;
-    const { savedQueries } = this.plugin.settings;
-    const nameEl = contentEl.createEl("input", {
-      type: "text",
-      attr: { placeholder: "name" },
-    });
-    const queryEl = contentEl.createEl("input", {
-      type: "text",
-      attr: { placeholder: "query" },
-    });
-    contentEl
-      .createDiv()
-      .createEl("button", { text: "Add new query" }, (but) => {
-        but.addEventListener("click", async () => {
-          const name = nameEl.value;
-          const query = queryEl.value;
 
-          if (savedQueries.findIndex((q) => q.name === name) > -1) {
-            new Notice(`A query with name: ${name} already exists`);
-          } else {
-            this.plugin.settings.savedQueries.push({
-              name,
-              query,
-            });
-            await this.plugin.saveSettings();
-            console.log(this.plugin.settings.savedQueries);
-            new Notice(`${name}: ${query} added.`);
-            this.settingsTab.initExistingSavedQs(this.savedQsDiv);
-
-            this.plugin.addCommand({
-              id: `AC-${name}: ${query}`,
-              name: `Run query: ${name} → ${query}`,
-              editorCallback: async (editor: Editor) => {
-                const cursorModal = new CursorsModal(
-                  this.app,
-                  editor,
-                  this.plugin
-                );
-                const { selection, offset } =
-                  await cursorModal.getSelectionAndOffset();
-                cursorModal.submit(query, selection, offset, true);
-              },
-            });
-            this.close();
-          }
-        });
-      });
+    new AddQComponent({
+      target: contentEl,
+      props: {
+        app: this.app,
+        plugin: this.plugin,
+        modal: this,
+        settingsTab: this.settingsTab,
+      },
+    });
   }
 
   onClose() {

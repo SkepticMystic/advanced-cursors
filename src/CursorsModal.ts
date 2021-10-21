@@ -6,6 +6,7 @@ import {
   Modal,
   Notice,
 } from "obsidian";
+import type { SavedQuery } from "src/interfaces";
 import type MyPlugin from "src/main";
 import QueryModal from "./Components/QueryModal.svelte";
 
@@ -35,11 +36,16 @@ export class CursorsModal extends Modal {
     content: string,
     offset: number,
     query: string,
-    regexQ: boolean
+    regexQ: boolean,
+    flags: string
   ) {
     let regex: RegExp;
     if (regexQ) {
-      regex = new RegExp(query, "g");
+      let useFlags = flags.slice();
+      if (!useFlags.includes("g")) {
+        useFlags += "g";
+      }
+      regex = new RegExp(query, useFlags);
     } else {
       regex = new RegExp(query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"), "g");
     }
@@ -74,14 +80,16 @@ export class CursorsModal extends Modal {
     query: string,
     selection: string,
     offset: number,
-    regexQ: boolean
+    regexQ: boolean,
+    flags: string = ""
   ) => {
     try {
       const selections = this.getSelectionsFromQuery(
         selection,
         offset,
         query,
-        regexQ
+        regexQ,
+        flags
       );
 
       console.log({ selections });

@@ -25,42 +25,45 @@
   >
 
   <input bind:this={regexQEl} type="checkbox" name="regexQ" checked />
-  <label for="regexQ">Regex?</label>
+  <label for="regexQ">Regex</label>
 </div>
 
-<div class="savedQ">
-  {#each plugin.settings.savedQueries as savedQ}
-    <div>
-      <span
-        class="savedQ-name"
-        on:click={async (e) => {
-          console.log(e);
-          const name = e.target.textContent;
-          const { query } = plugin.settings.savedQueries.find(
-            (savedQ) => savedQ.name === name
-          );
-          console.log({ query });
-          const { selection, offset } = await modal.getSelectionAndOffset();
-          modal.submit(query, selection, offset, regexQEl.checked);
-        }}
-      >
-        {savedQ.name}
-      </span>
-      <span>→</span>
-      <span
-        class="savedQ-query"
-        on:click={async (e) => {
-          console.log(e);
-          const query = e.target.textContent;
-          console.log({ query });
-          const { selection, offset } = await modal.getSelectionAndOffset();
-          modal.submit(query, selection, offset, regexQEl.checked);
-        }}
-      >
-        {savedQ.query}
-      </span>
-    </div>
-  {/each}
+<div class="savedQs">
+  <ol>
+    {#each plugin.settings.savedQueries as savedQ}
+      <li class="savedQ">
+        <span
+          class="savedQ-name"
+          on:click={async (e) => {
+            const name = e.target.textContent;
+            const { query, regexQ, flags } = plugin.settings.savedQueries.find(
+              (savedQ) => savedQ.name === name
+            );
+            console.log({ savedQ });
+            const { selection, offset } = await modal.getSelectionAndOffset();
+            modal.submit(query, selection, offset, regexQ, flags);
+          }}
+        >
+          {savedQ.name}
+        </span>
+        <span>→</span>
+        <span
+          class="savedQ-query"
+          on:click={async (e) => {
+            const query = e.target.textContent;
+            const { regexQ, flags } = plugin.settings.savedQueries.find(
+              (savedQ) => savedQ.query === query
+            );
+            console.log({ query });
+            const { selection, offset } = await modal.getSelectionAndOffset();
+            modal.submit(query, selection, offset, regexQ, flags);
+          }}
+        >
+          {savedQ.query}
+        </span>
+      </li>
+    {/each}
+  </ol>
 </div>
 
 <style>

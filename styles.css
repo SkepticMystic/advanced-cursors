@@ -1,6 +1,6 @@
 /* Sets all the text color to red! */
 .savedQ {
-  padding: 10px 3px;
+  padding: 5px 5px;
 }
 
 .deleteQButton {
@@ -15,4 +15,16 @@
 
 .savedQ-name:hover {
   background-color: var(--interactive-accent);
+  cursor: pointer;
+}
+
+.savedQ-query {
+  background-color: var(--background-primary-alt);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.savedQ-query:hover {
+  background-color: var(--interactive-accent);
+  cursor: pointer;
 }

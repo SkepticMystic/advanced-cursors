@@ -7,13 +7,14 @@ import {
 } from "obsidian";
 import { SettingTab } from "./SettingTab";
 import { CursorsModal } from "./CursorsModal";
+import type { SavedQuery } from "src/interfaces";
 
 interface Settings {
-  savedQueries: { name: string; query: string }[];
+  savedQueries: SavedQuery[];
 }
 
 const DEFAULT_SETTINGS: Settings = {
-  savedQueries: [{ name: "name", query: "query" }],
+  savedQueries: [],
 };
 
 export default class MyPlugin extends Plugin {
@@ -41,7 +42,13 @@ export default class MyPlugin extends Plugin {
           const cursorModal = new CursorsModal(this.app, editor, this);
           const { selection, offset } =
             await cursorModal.getSelectionAndOffset();
-          cursorModal.submit(query, selection, offset, true);
+          cursorModal.submit(
+            query,
+            selection,
+            offset,
+            savedQ.regexQ,
+            savedQ.flags
+          );
         },
       });
     });
