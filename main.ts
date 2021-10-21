@@ -45,42 +45,41 @@ export default class MyPlugin extends Plugin {
 		this.addSettingTab(new SettingTab(this.app, this));
 	}
 
-	async selectNextInstance(editor: Editor) {
+	async selectNextInstance(editor: Editor, appendQ = false) {
 		const currFile = this.app.workspace.getActiveFile();
 		const content = await this.app.vault.read(currFile);
 
 		const currSelection = editor.getSelection();
 		const currPos = editor.getCursor("to");
 
-		console.log({ content, currSelection, currPos });
-
-		const currSelections: EditorSelectionOrCaret[] =
-			editor.listSelections();
 		const currOffset = editor.posToOffset(currPos);
-
-		// const slice = content.slice(currOffset);
 
 		const nextI = content.indexOf(currSelection, currOffset);
 
-		console.log({ currOffset, nextI });
+		console.log({ currSelection, currOffset, nextI });
 
 		if (nextI > -1) {
-			const ch = nextI;
 			const { line } = currPos;
 			const anchor: EditorPosition = {
-				ch,
+				ch: nextI,
 				line,
 			};
 			const head: EditorPosition = {
-				ch: ch + currSelection.length,
+				ch: nextI + currSelection.length,
 				line,
 			};
 
-			currSelections.push({ anchor, head });
-			console.log({ anchor, head, currSelections });
-
-			editor.setSelections([{ anchor, head }]);
-			console.log(editor.listSelections());
+			if (appendQ) {
+				const currSelections: EditorSelectionOrCaret[] =
+					editor.listSelections();
+				currSelections.push({ anchor, head });
+				console.log(editor.listSelections());
+			} else {
+				editor.setSelections([{ anchor, head }]);
+			}
+			console.log({ anchor, head });
+		} else {
+			new Notice(`Cannot find next instance of ${currSelection}`);
 		}
 	}
 
