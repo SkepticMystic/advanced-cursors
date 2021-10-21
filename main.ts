@@ -28,9 +28,9 @@ export default class MyPlugin extends Plugin {
 		await this.loadSettings();
 
 		this.addCommand({
-			id: "open-sample-modal-simple",
-			name: "Open sample modal (simple)",
-			editorCallback: (editor: Editor, view: View) => {
+			id: "open-regex-match-modal",
+			name: "Open Regex Match Modal",
+			editorCallback: (editor: Editor) => {
 				new CursorsModal(this.app, editor).open();
 			},
 		});

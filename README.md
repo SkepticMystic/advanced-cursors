@@ -1,57 +1,33 @@
-## Obsidian Sample Plugin
+# Advanced Cursors
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+Advanced Cursors adds new commands to Obsidian which let you take more advantage of [multiple cursors](https://help.obsidian.md/How+to/Working+with+multiple+cursors).
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
+## Commands
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+### Move to next instance of current selection
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Changes the default font color to red using `styles.css`.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+This command takes the text you currently have selected, and moves the cursor to the next instance of that same text.
 
-### First time developing plugins?
+![](Assets/cursors-readme1.gif)
 
-Quick starting guide for new plugin devs:
+### Add next instance of current selection to selections
 
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+This command does mostly the same as the previous, except it keeps your previous cursors in place.
 
-### Releasing new releases
+This does the same thing as `Ctrl + d` in VS Code.
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments.
-- Publish the release.
+![](Assets/cursors-readme2.gif)
 
-### Adding your plugin to the community plugin list
+### Open Regex match modal
 
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+This command allows even more fine-grained control of where you place the cursor.
 
-### How to use
+When you open the modal, you will see a text input field, and submit button, and an option to toggle `Regex?`.
 
-- Clone this repo.
-- `npm i` or `yarn` to install dependencies
-- `npm run dev` to start compilation in watch mode.
+![](https://i.imgur.com/hCI4VBE.png)
 
-### Manually installing the plugin
+Enter a search query into the input field, and Advanced Cursors will place a cursor at each place in the current document that matches the query.
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+Toggle `Regex?` for the query to be treated as a regex, or a string literal.
 
-### API Documentation
-
-See https://github.com/obsidianmd/obsidian-api
+![](Assets/cursors2.gif)
