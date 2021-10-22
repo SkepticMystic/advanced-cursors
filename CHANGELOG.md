@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.21](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.20...0.0.21) (2021-10-22)
+
+
+### Features
+
+* :sparkles: Select current word if !somethingSelected ([1947018](https://github.com/SkepticMystic/advanced-cursors/commit/19470187368dfd2307715914f0031b383fc7c8ca))
+
 ### [0.0.20](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.19...0.0.20) (2021-10-22)
 
 
