@@ -3,6 +3,7 @@ import {
   EditorPosition,
   EditorSelectionOrCaret,
   Notice,
+  Platform,
   Plugin,
 } from "obsidian";
 import type { Settings } from "src/interfaces";
@@ -17,6 +18,15 @@ declare module "obsidian" {
   interface App {
     commands: {
       removeCommand: (id: string) => unknown;
+    };
+  }
+
+  interface Editor {
+    cm: {
+      findWordAt: (pos: EditorPosition) => EditorSelection | null;
+      state: {
+        wordAt: (offset: number) => { fromOffset: number; toOffset: number };
+      };
     };
   }
 }
@@ -123,40 +133,56 @@ export default class MyPlugin extends Plugin {
 
   getCurrSelection(editor: Editor, content: string) {
     const { anchor, head } = editor.listSelections().last();
+    const headOffset = editor.posToOffset(head);
+    let currSelection: string;
 
     if (!(anchor.line === head.line && anchor.ch === head.ch)) {
       const currSelection = editor.getRange(anchor, head);
-      const currOffset = editor.posToOffset(head);
-      return { currSelection, currOffset };
+      return { currSelection, currOffset: headOffset };
     }
 
-    const currOffset = editor.posToOffset(editor.getCursor("from"));
-    const stops = new RegExp(/\b/g);
+    try {
+      if (editor?.cm?.findWordAt) {
+        const wordRange = editor.cm.findWordAt(editor.getCursor());
+        currSelection = editor.getRange(wordRange.anchor, wordRange.head);
+      } else if (editor?.cm?.state.wordAt) {
+        const currRange = editor.cm.state.wordAt(
+          editor.posToOffset(editor.getCursor())
+        );
+        const fromPos = editor.offsetToPos(currRange.fromOffset);
+        const toPos = editor.offsetToPos(currRange.toOffset);
+        currSelection = editor.getRange(fromPos, toPos);
+      } else {
+        throw new Error("Cannot determine if cm5 or cm6");
+      }
 
-    // Go forward till stop
-    let [fwdWord, nextF, iF] = ["", "", 0];
-    while (true) {
-      nextF = content[currOffset + iF];
-      iF++;
-      if (nextF?.match(stops)) {
-        fwdWord += nextF;
-      } else break;
+      console.log({ currSelection });
+      return { currSelection, currOffset: headOffset };
+    } catch (error) {
+      console.log(error);
+      // const currOffset = editor.posToOffset(editor.getCursor("from"));
+      // const stops = new RegExp(/\b/g);
+      // // Go forward till stop
+      // let [fwdWord, nextF, iF] = ["", "", 0];
+      // while (true) {
+      //   nextF = content[currOffset + iF];
+      //   iF++;
+      //   if (nextF?.match(stops)) {
+      //     fwdWord += nextF;
+      //   } else break;
+      // }
+      // // Go backward till stop
+      // let [backWord, nextB, iB] = ["", "", 1];
+      // while (true) {
+      //   nextB = content[currOffset - iB];
+      //   iB++;
+      //   if (nextB?.match(stops)) {
+      //     backWord += nextB;
+      //   } else break;
+      // }
+      // const reversedBackWord = backWord.split("").reverse().join("");
+      // currSelection = reversedBackWord + fwdWord;
     }
-
-    // Go backward till stop
-    let [backWord, nextB, iB] = ["", "", 1];
-    while (true) {
-      nextB = content[currOffset - iB];
-      iB++;
-      if (nextB?.match(stops)) {
-        backWord += nextB;
-      } else break;
-    }
-
-    const reversedBackWord = backWord.split("").reverse().join("");
-    const currSelection = reversedBackWord + fwdWord;
-    console.log({ currSelection });
-    return { currSelection, currOffset };
   }
 
   async selectNextInstance(editor: Editor, appendQ = false) {
