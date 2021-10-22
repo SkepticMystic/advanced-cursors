@@ -214,7 +214,7 @@ export default class MyPlugin extends Plugin {
         );
         this.setSelections(appendQ, editor, editorSelection);
         new Notice(
-          `Cannot find next instance of "${currSelection}", looping back to start.`
+          `🔁: First ${currSelection}`
         );
       } else {
         new Notice(
