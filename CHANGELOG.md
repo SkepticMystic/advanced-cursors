@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.20](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.19...0.0.20) (2021-10-22)
+
+
+### Features
+
+* :sparkles: Edit existing saved queries ([24fc39c](https://github.com/SkepticMystic/advanced-cursors/commit/24fc39c2e1690d7c53b6bdeceb496e5a1af8fbf2))
+
 ### [0.0.19](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.18...0.0.19) (2021-10-22)
 
 ### [0.0.18](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.17...0.0.18) (2021-10-22)
