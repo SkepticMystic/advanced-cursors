@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.15](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.14...0.0.15) (2021-10-22)
+
+
+### Features
+
+* :sparkles: Fix [#4](https://github.com/SkepticMystic/advanced-cursors/issues/4): Loop back to start if no next instance is found ([aada0ff](https://github.com/SkepticMystic/advanced-cursors/commit/aada0ff8626ee3cdc2cb363eb9652e68f82ba324))
+
 ### [0.0.14](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.13...0.0.14) (2021-10-22)
 
 ### [0.0.13](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.12...0.0.13) (2021-10-21)
