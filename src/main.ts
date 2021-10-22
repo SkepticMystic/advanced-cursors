@@ -145,20 +145,25 @@ export default class MyPlugin extends Plugin {
     }
   }
 
-  getCurrSelection(editor: Editor, content: string) {
+  getCurrSelection(editor: Editor) {
     const { anchor, head } = editor.listSelections().last();
+    const anchorOffset = editor.posToOffset(anchor);
     const headOffset = editor.posToOffset(head);
     let currSelection: string;
 
     if (!(anchor.line === head.line && anchor.ch === head.ch)) {
       const currSelection = editor.getRange(anchor, head);
-      return { currSelection, currOffset: headOffset };
+      return { currSelection, headOffset, anchorOffset };
     }
 
     try {
       if (editor?.cm?.findWordAt) {
         const wordRange = editor.cm.findWordAt(editor.getCursor());
-        currSelection = editor.getRange(wordRange.anchor, wordRange.head);
+        const { anchor } = wordRange;
+        const { head } = wordRange;
+        currSelection = editor.getRange(anchor, head);
+
+        return { currSelection, headOffset, anchorOffset, head, anchor };
       } else if (editor?.cm?.state.wordAt) {
         const currRange = editor.cm.state.wordAt(
           editor.posToOffset(editor.getCursor())
@@ -166,12 +171,16 @@ export default class MyPlugin extends Plugin {
         const fromPos = editor.offsetToPos(currRange.fromOffset);
         const toPos = editor.offsetToPos(currRange.toOffset);
         currSelection = editor.getRange(fromPos, toPos);
+        return {
+          currSelection,
+          headOffset,
+          anchorOffset,
+          anchor: fromPos,
+          head: toPos,
+        };
       } else {
         throw new Error("Cannot determine if cm5 or cm6");
       }
-
-      console.log({ currSelection });
-      return { currSelection, currOffset: headOffset };
     } catch (error) {
       console.log(error);
     }
@@ -181,12 +190,17 @@ export default class MyPlugin extends Plugin {
     const currFile = this.app.workspace.getActiveFile();
     const content = await this.app.vault.read(currFile);
 
-    const { currSelection, currOffset } = this.getCurrSelection(
-      editor,
-      content
-    );
+    const { currSelection, headOffset, anchorOffset, head, anchor } =
+      this.getCurrSelection(editor);
 
-    const nextI = content.indexOf(currSelection, currOffset);
+    if (!editor.somethingSelected()) {
+      console.log("selecting first ins");
+      console.log({ anchor, head });
+      editor.setSelection(anchor, head);
+      return;
+    }
+
+    const nextI = content.indexOf(currSelection, headOffset);
 
     if (nextI > -1) {
       const editorSelection = this.createSelection(
