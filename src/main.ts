@@ -113,7 +113,7 @@ export default class MyPlugin extends Plugin {
         editor.setSelections([{ anchor, head }]);
       }
     } else {
-      new Notice(`Cannot find next instance of ${currSelection}`);
+      new Notice(`Cannot find next instance of "${currSelection}"`);
     }
   }
 

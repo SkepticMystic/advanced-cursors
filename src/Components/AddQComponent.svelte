@@ -28,7 +28,7 @@
     }
 
     if (savedQueries.findIndex((q) => q.name === name) > -1) {
-      new Notice(`A query with named '${name}' already exists`);
+      new Notice(`A query with named "${name}" already exists`);
     } else {
       // Add new query to settings
       const regexQ = regexEl.checked;
