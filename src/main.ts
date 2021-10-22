@@ -156,7 +156,6 @@ export default class MyPlugin extends Plugin {
     const reversedBackWord = backWord.split("").reverse().join("");
     const currSelection = reversedBackWord + fwdWord;
     console.log({ currSelection });
-
     return { currSelection, currOffset };
   }
 
@@ -170,7 +169,6 @@ export default class MyPlugin extends Plugin {
     );
 
     const nextI = content.indexOf(currSelection, currOffset);
-
     console.log({ currSelection, currOffset, nextI });
 
     if (nextI > -1) {

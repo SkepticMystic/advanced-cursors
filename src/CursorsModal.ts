@@ -1,12 +1,4 @@
-import {
-  App,
-  Editor,
-  EditorPosition,
-  EditorSelectionOrCaret,
-  Modal,
-  Notice,
-} from "obsidian";
-import type { SavedQuery } from "src/interfaces";
+import { App, Editor, EditorSelectionOrCaret, Modal, Notice } from "obsidian";
 import type MyPlugin from "src/main";
 import QueryModal from "./Components/QueryModal.svelte";
 
@@ -19,10 +11,12 @@ export class CursorsModal extends Modal {
     this.editor = editor;
     this.plugin = plugin;
   }
-
+  /**
+   * If something is selected, return that, and the offset inside the content. Otherwise return the entire content of the note
+   */
   async getSelectionAndOffset() {
     const selection = this.editor.getSelection();
-    const offset = this.editor.getCursor("from").line;
+    const offset = this.editor.posToOffset(this.editor.getCursor("from"));
     if (selection !== "") {
       return { selection, offset };
     } else {
@@ -31,14 +25,25 @@ export class CursorsModal extends Modal {
       return { selection: content, offset: 0 };
     }
   }
-
+  /**
+   * Given a selection of text, and a query to match, return all EditorSelections of the query
+   * @param  {Editor} editor
+   * @param  {string} content
+   * @param  {number} offset
+   * @param  {string} query
+   * @param  {boolean} regexQ
+   * @param  {string} flags
+   * @returns EditorSelectionOrCaret
+   */
   getSelectionsFromQuery(
+    editor: Editor,
     content: string,
     offset: number,
     query: string,
     regexQ: boolean,
     flags: string
-  ) {
+  ): EditorSelectionOrCaret[] {
+    console.log({ content, offset });
     let regex: RegExp;
     if (regexQ) {
       let useFlags = flags.slice();
@@ -50,27 +55,17 @@ export class CursorsModal extends Modal {
       regex = new RegExp(query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"), "g");
     }
 
-    const lines = content.split("\n");
     const selections: EditorSelectionOrCaret[] = [];
+    const matches = [...content.matchAll(regex)];
 
-    lines.forEach((line, i) => {
-      const matches = line.matchAll(regex);
-      const matchesArr = [...matches];
+    matches.forEach((match) => {
+      const from = match.index + offset;
+      const to = from + match[0].length;
 
-      matchesArr.forEach((matchArr) => {
-        const from = matchArr.index;
-        if (from !== undefined) {
-          const anchor: EditorPosition = {
-            ch: from,
-            line: i + offset,
-          };
-          const head: EditorPosition = {
-            ch: from + matchArr[0].length,
-            line: i + offset,
-          };
-          selections.push({ anchor, head });
-        }
-      });
+      const anchor = editor.offsetToPos(from);
+      const head = editor.offsetToPos(to);
+
+      selections.push({ anchor, head });
     });
 
     return selections;
@@ -85,6 +80,7 @@ export class CursorsModal extends Modal {
   ) => {
     try {
       const selections = this.getSelectionsFromQuery(
+        this.editor,
         selection,
         offset,
         query,
