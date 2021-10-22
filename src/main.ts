@@ -5,17 +5,21 @@ import {
   Notice,
   Plugin,
 } from "obsidian";
-import { SettingTab } from "./SettingTab";
+import type { Settings } from "src/interfaces";
 import { CursorsModal } from "./CursorsModal";
-import type { SavedQuery } from "src/interfaces";
-
-interface Settings {
-  savedQueries: SavedQuery[];
-}
+import { SettingTab } from "./SettingTab";
 
 const DEFAULT_SETTINGS: Settings = {
   savedQueries: [],
 };
+
+declare module "obsidian" {
+  interface App {
+    commands: {
+      removeCommand: (id: string) => unknown;
+    };
+  }
+}
 
 export default class MyPlugin extends Plugin {
   settings: Settings;
@@ -117,20 +121,57 @@ export default class MyPlugin extends Plugin {
     }
   }
 
+  getCurrSelection(editor: Editor, content: string) {
+    const { anchor, head } = editor.listSelections().last();
+
+    if (!(anchor.line === head.line && anchor.ch === head.ch)) {
+      const currSelection = editor.getRange(anchor, head);
+      const currOffset = editor.posToOffset(head);
+      return { currSelection, currOffset };
+    }
+
+    const currOffset = editor.posToOffset(editor.getCursor("from"));
+    const stops = new RegExp(/\b/g);
+
+    // Go forward till stop
+    let [fwdWord, nextF, iF] = ["", "", 0];
+    while (true) {
+      nextF = content[currOffset + iF];
+      iF++;
+      if (nextF?.match(stops)) {
+        fwdWord += nextF;
+      } else break;
+    }
+
+    // Go backward till stop
+    let [backWord, nextB, iB] = ["", "", 1];
+    while (true) {
+      nextB = content[currOffset - iB];
+      iB++;
+      if (nextB?.match(stops)) {
+        backWord += nextB;
+      } else break;
+    }
+
+    const reversedBackWord = backWord.split("").reverse().join("");
+    const currSelection = reversedBackWord + fwdWord;
+    console.log({ currSelection });
+
+    return { currSelection, currOffset };
+  }
+
   async selectNextInstance(editor: Editor, appendQ = false) {
     const currFile = this.app.workspace.getActiveFile();
     const content = await this.app.vault.read(currFile);
 
-    const lastSelection = editor.listSelections().last();
-    const currSelection = editor.getRange(
-      lastSelection.anchor,
-      lastSelection.head
+    const { currSelection, currOffset } = this.getCurrSelection(
+      editor,
+      content
     );
 
-    const currOffset = editor.posToOffset(lastSelection.head);
     const nextI = content.indexOf(currSelection, currOffset);
 
-    console.log({ currOffset, nextI });
+    console.log({ currSelection, currOffset, nextI });
 
     if (nextI > -1) {
       const editorSelection = this.createSelection(
