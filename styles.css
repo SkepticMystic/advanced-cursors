@@ -3,6 +3,7 @@
   padding: 5px 5px;
 }
 
+.editQButton,
 .deleteQButton {
   float: right;
 }
@@ -13,8 +14,11 @@
   border-radius: 3px;
 }
 
-.savedQ-name:hover {
-  background-color: var(--interactive-accent);
+.savedQ-name:hover,
+.editQButton:hover,
+.deleteQButton:hover,
+.savedQ-query:hover {
+  background-color: var(--interactive-accent) !important;
   cursor: pointer;
 }
 
@@ -22,9 +26,4 @@
   background-color: var(--background-primary-alt);
   padding: 2px 4px;
   border-radius: 3px;
-}
-
-.savedQ-query:hover {
-  background-color: var(--interactive-accent);
-  cursor: pointer;
 }

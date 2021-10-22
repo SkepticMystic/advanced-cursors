@@ -1,4 +1,5 @@
 import {
+  App,
   Editor,
   EditorPosition,
   EditorSelectionOrCaret,
@@ -6,7 +7,7 @@ import {
   Platform,
   Plugin,
 } from "obsidian";
-import type { Settings } from "src/interfaces";
+import type { SavedQuery, Settings } from "src/interfaces";
 import { CursorsModal } from "./CursorsModal";
 import { SettingTab } from "./SettingTab";
 
@@ -50,7 +51,7 @@ export default class MyPlugin extends Plugin {
     this.settings.savedQueries.forEach((savedQ) => {
       const { name, query } = savedQ;
       this.addCommand({
-        id: `AC-${name}: ${query}`,
+        id: `AC-${name} → ${query}`,
         name: `Run query: ${name} → ${query}`,
         editorCallback: async (editor: Editor) => {
           const cursorModal = new CursorsModal(this.app, editor, this);
@@ -84,6 +85,19 @@ export default class MyPlugin extends Plugin {
     });
 
     this.addSettingTab(new SettingTab(this.app, this));
+  }
+
+  addACCommand(savedQ: SavedQuery, app: App) {
+    const { name, query, regexQ, flags } = savedQ;
+    this.addCommand({
+      id: `AC-${name} → ${query}`,
+      name: `Run query: ${name} → ${query}`,
+      editorCallback: async (editor: Editor) => {
+        const cursorModal = new CursorsModal(app, editor, this);
+        const { selection, offset } = await cursorModal.getSelectionAndOffset();
+        cursorModal.submit(query, selection, offset, regexQ, flags);
+      },
+    });
   }
 
   createSelection(
@@ -160,28 +174,6 @@ export default class MyPlugin extends Plugin {
       return { currSelection, currOffset: headOffset };
     } catch (error) {
       console.log(error);
-      // const currOffset = editor.posToOffset(editor.getCursor("from"));
-      // const stops = new RegExp(/\b/g);
-      // // Go forward till stop
-      // let [fwdWord, nextF, iF] = ["", "", 0];
-      // while (true) {
-      //   nextF = content[currOffset + iF];
-      //   iF++;
-      //   if (nextF?.match(stops)) {
-      //     fwdWord += nextF;
-      //   } else break;
-      // }
-      // // Go backward till stop
-      // let [backWord, nextB, iB] = ["", "", 1];
-      // while (true) {
-      //   nextB = content[currOffset - iB];
-      //   iB++;
-      //   if (nextB?.match(stops)) {
-      //     backWord += nextB;
-      //   } else break;
-      // }
-      // const reversedBackWord = backWord.split("").reverse().join("");
-      // currSelection = reversedBackWord + fwdWord;
     }
   }
 
@@ -195,7 +187,6 @@ export default class MyPlugin extends Plugin {
     );
 
     const nextI = content.indexOf(currSelection, currOffset);
-    console.log({ currSelection, currOffset, nextI });
 
     if (nextI > -1) {
       const editorSelection = this.createSelection(
@@ -213,9 +204,7 @@ export default class MyPlugin extends Plugin {
           currSelection
         );
         this.setSelections(appendQ, editor, editorSelection);
-        new Notice(
-          `🔁: First ${currSelection}`
-        );
+        new Notice(`🔁: First "${currSelection}"`);
       } else {
         new Notice(
           `Cannot find next instance of "${currSelection}" anywhere else in file.`

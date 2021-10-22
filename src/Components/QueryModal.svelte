@@ -18,7 +18,6 @@
   <button
     on:click={async () => {
       const query = inputEl.value;
-      console.log({ query });
       const { selection, offset } = await modal.getSelectionAndOffset();
       modal.submit(query, selection, offset, regexQEl.checked);
     }}>Submit</button
@@ -40,7 +39,7 @@
             const { query, regexQ, flags } = plugin.settings.savedQueries.find(
               (savedQ) => savedQ.name === name
             );
-            console.log({ savedQ });
+
             const { selection, offset } = await modal.getSelectionAndOffset();
             modal.submit(query, selection, offset, regexQ, flags);
           }}
@@ -56,7 +55,6 @@
             const { regexQ, flags } = plugin.settings.savedQueries.find(
               (savedQ) => savedQ.query === query
             );
-            console.log({ query });
             const { selection, offset } = await modal.getSelectionAndOffset();
             modal.submit(query, selection, offset, regexQ, flags);
           }}

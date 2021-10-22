@@ -88,7 +88,6 @@ export class CursorsModal extends Modal {
         flags
       );
 
-      console.log({ selections });
       new Notice(`${selections.length} matches found.`);
 
       this.editor.setSelections(selections);

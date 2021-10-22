@@ -1,4 +1,5 @@
-import { App, Modal, PluginSettingTab } from "obsidian";
+import { App, Modal, Notice, PluginSettingTab } from "obsidian";
+import type { SavedQuery } from "src/interfaces";
 import type MyPlugin from "src/main";
 import AddQComponent from "./Components/AddQComponent.svelte";
 
@@ -24,7 +25,7 @@ export class SettingTab extends PluginSettingTab {
       savedQLi.createEl(
         "button",
         {
-          text: "X",
+          text: "❌",
           cls: "deleteQButton",
         },
         (but) => {
@@ -34,21 +35,57 @@ export class SettingTab extends PluginSettingTab {
           });
         }
       );
+
+      savedQLi.createEl(
+        "button",
+        {
+          text: "✏️",
+          cls: "editQButton",
+        },
+        (but) => {
+          but.addEventListener("click", async () => {
+            console.log("editing" + i);
+            this.editSavedQ(i);
+          });
+        }
+      );
     });
   };
 
-  removeSavedQ = async (i: number) => {
+  editSavedQ(i: number) {
     const { settings } = this.plugin;
-    const copy = [...settings.savedQueries];
-    const removedQ = copy.splice(i, 1);
+    const existingQ = settings.savedQueries[i];
 
-    settings.savedQueries = copy;
-    await this.plugin.saveSettings();
-    console.log({ savedQs: settings.savedQueries, removedQ: removedQ[0] });
+    new AddQModal(
+      this.app,
+      this.plugin,
+      this,
+      this.savedQsDiv,
+      existingQ,
+      i
+    ).open();
+  }
 
-    const { name, query } = removedQ[0];
+  removeSavedQ = async (i: number) => {
+    try {
+      const { settings } = this.plugin;
+      const copy = [...settings.savedQueries];
+      const removedQ = copy.splice(i, 1);
 
-    this.app.commands.removeCommand(`advanced-cursors:AC-${name}: ${query}`);
+      settings.savedQueries = copy;
+      await this.plugin.saveSettings();
+      console.log({ savedQs: settings.savedQueries, removedQ: removedQ[0] });
+      this.initExistingSavedQs(this.savedQsDiv);
+
+      const { name, query } = removedQ[0];
+
+      this.app.commands.removeCommand(`advanced-cursors:AC-${name} → ${query}`);
+    } catch (error) {
+      console.log(error);
+      new Notice(
+        `Something went wrong when deleting that query. Check the console for errors.`
+      );
+    }
   };
 
   display(): void {
@@ -56,9 +93,19 @@ export class SettingTab extends PluginSettingTab {
     const { settings } = this.plugin;
     containerEl.empty();
 
+    containerEl.createEl("h2", { text: "Advanced Cursors Settings" });
+    containerEl.createEl("h3", { text: "Saved Queries" });
+
     containerEl.createEl("button", { text: "Add Query" }, (but) => {
       but.addEventListener("click", () => {
-        new AddQModal(this.app, this.plugin, this, this.savedQsDiv).open();
+        new AddQModal(
+          this.app,
+          this.plugin,
+          this,
+          this.savedQsDiv,
+          { name: "", query: "", flags: "", regexQ: true },
+          -1
+        ).open();
       });
     });
     this.savedQsDiv = containerEl.createDiv({ cls: "savedQs" });
@@ -70,17 +117,23 @@ export class AddQModal extends Modal {
   plugin: MyPlugin;
   settingsTab: SettingTab;
   savedQsDiv: HTMLDivElement;
+  existingQ: SavedQuery;
+  i: number;
 
   constructor(
     app: App,
     plugin: MyPlugin,
     settingsTab: SettingTab,
-    savedQsDiv: HTMLDivElement
+    savedQsDiv: HTMLDivElement,
+    existingQ: SavedQuery,
+    i: number
   ) {
     super(app);
     this.plugin = plugin;
     this.settingsTab = settingsTab;
     this.savedQsDiv = savedQsDiv;
+    this.existingQ = existingQ;
+    this.i = i;
   }
 
   async onOpen() {
@@ -93,6 +146,8 @@ export class AddQModal extends Modal {
         plugin: this.plugin,
         modal: this,
         settingsTab: this.settingsTab,
+        existingQ: this.existingQ,
+        i: this.i,
       },
     });
   }
