@@ -35,11 +35,11 @@ Toggle `Regex?` for the query to be treated as a regex, or a string literal.
 
 ![](Assets/cursors2.gif)
 
-You can now also use [[#Saved Queries]] to quickly run queries.
+You can now also use [Saved Queries](https://github.com/SkepticMystic/advanced-cursors/blob/master/README.md#saved-queries) to quickly run queries.
 
 ## Saved Queries
 
-In the settings tab of Advanced Cursors, you will see an interface allowing you to `Add New Query`. This allows you to set up a query (regex or literal) to quickly access from the [[# Open Regex match modal|Match Modal]], or run as an Obsidian command from the command palette.
+In the settings tab of Advanced Cursors, you will see an interface allowing you to `Add New Query`. This allows you to set up a query (regex or literal) to quickly access from the [Match Modal](https://github.com/SkepticMystic/advanced-cursors/blob/master/README.md#open-regex-match-modal), or run as an Obsidian command from the command palette.
 
 In the `Add New Query` modal, you have 4 options:
 
