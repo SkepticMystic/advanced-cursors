@@ -46,6 +46,7 @@ In the `Add New Query` modal, you have 4 options:
 1. The `name` of the query,
 2. The actual `query` itself,
 3. Any [regex flags](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#advanced_searching_with_flags) to apply to the query (if it is a regex),
+   - The `g` flag is automatically added, but it won't break if you add it yourself.
 4. A toggle to say if the `query` should be interpretted as a regex or literal string.
 
 ![image](https://user-images.githubusercontent.com/70717676/138410689-e0846afa-3f9e-4bcd-9fa0-27679416a2e1.png)
