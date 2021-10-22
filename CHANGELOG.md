@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.18](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.17...0.0.18) (2021-10-22)
+
+
+### Features
+
+* :sparkles: CursorModal works with multiline queries! ([46936de](https://github.com/SkepticMystic/advanced-cursors/commit/46936de6cfa5d4ebb0c3e2da2da1720a36579785))
+
 ### [0.0.17](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.16...0.0.17) (2021-10-22)
 
 ### [0.0.16](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.15...0.0.16) (2021-10-22)
