@@ -4,3 +4,7 @@ export interface SavedQuery {
   regexQ: boolean;
   flags: string;
 }
+
+export interface Settings {
+  savedQueries: SavedQuery[];
+}

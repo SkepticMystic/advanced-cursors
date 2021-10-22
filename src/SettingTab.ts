@@ -13,20 +13,27 @@ export class SettingTab extends PluginSettingTab {
 
   initExistingSavedQs = (savedQsDiv: HTMLDivElement) => {
     savedQsDiv.empty();
+    const listEl = savedQsDiv.createEl("ol");
     this.plugin.settings.savedQueries.forEach((savedQ, i) => {
-      const savedQDiv = savedQsDiv.createDiv({ cls: "savedQ" });
-      savedQDiv.createSpan({ text: savedQ.name, cls: "savedQ-name" });
-      savedQDiv.createSpan({ text: " → " });
-      savedQDiv.createSpan({ text: savedQ.query });
+      const savedQLi = listEl.createEl("li", { cls: "savedQ" });
 
-      const deleteQ = savedQDiv.createEl("button", {
-        text: "X",
-        cls: "deleteQButton",
-      });
-      deleteQ.addEventListener("click", async () => {
-        savedQDiv.remove();
-        this.removeSavedQ(i);
-      });
+      savedQLi.createSpan({ text: savedQ.name, cls: "savedQ-name" });
+      savedQLi.createSpan({ text: " → " });
+      savedQLi.createSpan({ text: savedQ.query });
+
+      savedQLi.createEl(
+        "button",
+        {
+          text: "X",
+          cls: "deleteQButton",
+        },
+        (but) => {
+          but.addEventListener("click", async () => {
+            savedQLi.remove();
+            this.removeSavedQ(i);
+          });
+        }
+      );
     });
   };
 
@@ -34,9 +41,10 @@ export class SettingTab extends PluginSettingTab {
     const { settings } = this.plugin;
     const copy = [...settings.savedQueries];
     const removedQ = copy.splice(i, 1);
+
     settings.savedQueries = copy;
     await this.plugin.saveSettings();
-    console.log(settings.savedQueries, copy);
+    console.log({ savedQs: settings.savedQueries, removedQ: removedQ[0] });
 
     const { name, query } = removedQ[0];
 
@@ -46,21 +54,14 @@ export class SettingTab extends PluginSettingTab {
   display(): void {
     let { containerEl } = this;
     const { settings } = this.plugin;
-
     containerEl.empty();
 
-    const addQButton = containerEl.createEl(
-      "button",
-      { text: "Add Query" },
-      (but) => {
-        but.addEventListener("click", () => {
-          console.log("clicked");
-          new AddQModal(this.app, this.plugin, this, this.savedQsDiv).open();
-        });
-      }
-    );
+    containerEl.createEl("button", { text: "Add Query" }, (but) => {
+      but.addEventListener("click", () => {
+        new AddQModal(this.app, this.plugin, this, this.savedQsDiv).open();
+      });
+    });
     this.savedQsDiv = containerEl.createDiv({ cls: "savedQs" });
-
     this.initExistingSavedQs(this.savedQsDiv);
   }
 }

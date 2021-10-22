@@ -35,6 +35,7 @@
         <span
           class="savedQ-name"
           on:click={async (e) => {
+            // @ts-ignore
             const name = e.target.textContent;
             const { query, regexQ, flags } = plugin.settings.savedQueries.find(
               (savedQ) => savedQ.name === name
@@ -50,6 +51,7 @@
         <span
           class="savedQ-query"
           on:click={async (e) => {
+            // @ts-ignore
             const query = e.target.textContent;
             const { regexQ, flags } = plugin.settings.savedQueries.find(
               (savedQ) => savedQ.query === query
