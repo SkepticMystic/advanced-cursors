@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.16](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.15...0.0.16) (2021-10-22)
+
+
+### Features
+
+* :sparkles: Detect word under cursor if nothing is selected! ([e93ece9](https://github.com/SkepticMystic/advanced-cursors/commit/e93ece95b2af1c13d3e450364e4a59759f8d6bff))
+
 ### [0.0.15](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.14...0.0.15) (2021-10-22)
 
 
