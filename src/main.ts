@@ -72,49 +72,21 @@ export default class MyPlugin extends Plugin {
     this.addSettingTab(new SettingTab(this.app, this));
   }
 
-  async selectNextInstance(editor: Editor, appendQ = false) {
-    const currFile = this.app.workspace.getActiveFile();
-    const content = await this.app.vault.read(currFile);
-
-    // const currSelection = editor.getSelection();
-
-    const lastSelection = editor.listSelections().last();
-    const currSelection = editor.getRange(
-      lastSelection.anchor,
-      lastSelection.head
-    );
-
-    const currOffset = editor.posToOffset(lastSelection.head);
-
-    const nextI = content.indexOf(currSelection, currOffset);
-
-    console.log({ currOffset, nextI });
-
-    if (nextI > -1) {
-      const { line, ch } = editor.offsetToPos(nextI);
-      const anchor: EditorPosition = {
-        ch,
-        line,
-      };
-      const head: EditorPosition = {
-        ch: ch + currSelection.length,
-        line,
-      };
-
-      if (appendQ) {
-        const currSelections: EditorSelectionOrCaret[] =
-          editor.listSelections();
-
-        const reconstructedSelections =
-          this.reconstructCurrentSelections(currSelections);
-        reconstructedSelections.push({ anchor, head });
-        editor.setSelections(reconstructedSelections);
-      } else {
-        editor.setSelections([{ anchor, head }]);
-      }
-    } else {
-      new Notice(`Cannot find next instance of "${currSelection}"`);
-    }
+  createSelection(
+    editor: Editor,
+    nextI: number,
+    currSelection: string
+  ): EditorSelectionOrCaret {
+    const { line, ch } = editor.offsetToPos(nextI);
+    const anchor: EditorPosition = {
+      ch,
+      line,
+    };
+    const head: EditorPosition = {
+      ch: ch + currSelection.length,
+      line,
+    };
+    return { anchor, head };
   }
 
   reconstructCurrentSelections(selections: EditorSelectionOrCaret[]) {
@@ -126,6 +98,65 @@ export default class MyPlugin extends Plugin {
       });
     });
     return newSelections;
+  }
+
+  setSelections(
+    appendQ: boolean,
+    editor: Editor,
+    editorSelection: EditorSelectionOrCaret
+  ) {
+    if (appendQ) {
+      const currSelections: EditorSelectionOrCaret[] = editor.listSelections();
+
+      const reconstructedSelections =
+        this.reconstructCurrentSelections(currSelections);
+      reconstructedSelections.push(editorSelection);
+      editor.setSelections(reconstructedSelections);
+    } else {
+      editor.setSelections([editorSelection]);
+    }
+  }
+
+  async selectNextInstance(editor: Editor, appendQ = false) {
+    const currFile = this.app.workspace.getActiveFile();
+    const content = await this.app.vault.read(currFile);
+
+    const lastSelection = editor.listSelections().last();
+    const currSelection = editor.getRange(
+      lastSelection.anchor,
+      lastSelection.head
+    );
+
+    const currOffset = editor.posToOffset(lastSelection.head);
+    const nextI = content.indexOf(currSelection, currOffset);
+
+    console.log({ currOffset, nextI });
+
+    if (nextI > -1) {
+      const editorSelection = this.createSelection(
+        editor,
+        nextI,
+        currSelection
+      );
+      this.setSelections(appendQ, editor, editorSelection);
+    } else {
+      const loopedI = content.indexOf(currSelection);
+      if (loopedI > -1) {
+        const editorSelection = this.createSelection(
+          editor,
+          loopedI,
+          currSelection
+        );
+        this.setSelections(appendQ, editor, editorSelection);
+        new Notice(
+          `Cannot find next instance of "${currSelection}", looping back to start.`
+        );
+      } else {
+        new Notice(
+          `Cannot find next instance of "${currSelection}" anywhere else in file.`
+        );
+      }
+    }
   }
 
   onunload() {}
