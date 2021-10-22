@@ -55,9 +55,9 @@ In the `Add New Query` modal, you have 4 options:
 
 After adding a query, it will appear in a list of saved queries in settings:
 
-![image](https://user-images.githubusercontent.com/70717676/138410236-656dc991-5322-40e4-8ec8-ee4fca273062.png)
+![image](https://user-images.githubusercontent.com/70717676/138498450-03d966e6-4f90-4165-944f-64a1e8380610.png)
 
-In the Match Modal (Simply click the query to run it:
+In the Match Modal (Simply click the query to run it):
 
 ![image](https://user-images.githubusercontent.com/70717676/138410277-b3b0ebb0-15f0-45a2-ac1e-54578bc68c9b.png)
 
