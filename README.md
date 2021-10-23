@@ -2,6 +2,8 @@
 
 Advanced Cursors adds new commands to Obsidian which let you take more advantage of [multiple cursors](https://help.obsidian.md/How+to/Working+with+multiple+cursors).
 
+This plugin pairs really well with `@spslater`'s [Cursor Position plugin](https://github.com/spslater/obsidian-cursor-location-plugin)
+
 ## Commands
 
 ### Move to next instance of current selection
