@@ -1,15 +1,16 @@
 <script lang="ts">
-  import { App, Notice } from "obsidian";
-  import type { SavedQuery } from "src/interfaces";
+  import { Notice } from "obsidian";
+  import type { Query } from "src/interfaces";
   import type ACPlugin from "src/main";
-  import type { AddQModal, ACSettingTab } from "src/SettingTab";
+  import type { ACSettingTab, AddQModal } from "src/SettingTab";
+  import { cmdNextId, cmdRunId } from "src/utils";
   import { onMount } from "svelte";
 
-  export let app: App;
+  // export let app: App;
   export let plugin: ACPlugin;
   export let modal: AddQModal;
   export let settingsTab: ACSettingTab;
-  export let existingQ: SavedQuery;
+  export let existingQ: Query;
   export let i: number;
 
   let nameEl: HTMLInputElement;
@@ -20,7 +21,6 @@
   onMount(() => nameEl.focus());
 
   async function onClick(i: number) {
-    console.log({ i });
     const name = nameEl.value;
     const query = queryEl.value;
     const { savedQueries } = plugin.settings;
@@ -33,6 +33,8 @@
     if (i === -1 && savedQueries.findIndex((q) => q.name === name) > -1) {
       new Notice(`A query with named "${name}" already exists`);
     } else {
+      const oldQ = savedQueries[i];
+
       // Add new query to settings
       const regexQ = regexEl.checked;
       const flags = flagsEl.value;
@@ -44,15 +46,13 @@
       };
 
       if (i > -1) {
+        // Remove old command
+        this.app.commands.removeCommand(cmdRunId(oldQ));
+        this.app.commands.removeCommand(cmdNextId(oldQ));
+
         // Overwrite old Q
         plugin.settings.savedQueries[i] = newQ;
         new Notice(`${name} → ${query} updated.`);
-
-        // Remove old command
-        app.commands.removeCommand(`advanced-cursors:AC-${name} → ${query}`);
-        app.commands.removeCommand(
-          `advanced-cursors:AC-next-${name} → ${query}`
-        );
       } else {
         plugin.settings.savedQueries.push(newQ);
         new Notice(`${name} → ${query} added.`);
@@ -63,8 +63,8 @@
       settingsTab.initExistingSavedQs(modal.savedQsDiv);
 
       //   Add new plugin command
-      plugin.addACCommand(newQ);
-      plugin.addSelectInstanceCommand(newQ);
+      plugin.addRunCmd(newQ);
+      plugin.addNextCmd(newQ);
       modal.close();
     }
   }

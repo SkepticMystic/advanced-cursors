@@ -1,6 +1,7 @@
 import { App, Modal, Notice, PluginSettingTab } from "obsidian";
-import type { SavedQuery } from "src/interfaces";
+import type { Query } from "src/interfaces";
 import type ACPlugin from "src/main";
+import { cmdNextId, cmdRunId } from "src/utils";
 import AddQComponent from "./Components/AddQComponent.svelte";
 
 export class ACSettingTab extends PluginSettingTab {
@@ -70,19 +71,15 @@ export class ACSettingTab extends PluginSettingTab {
     try {
       const { settings } = this.plugin;
       const copy = [...settings.savedQueries];
-      const removedQ = copy.splice(i, 1);
+      const removedQ = copy.splice(i, 1)[0];
 
       settings.savedQueries = copy;
       await this.plugin.saveSettings();
-      console.log({ savedQs: settings.savedQueries, removedQ: removedQ[0] });
+      console.log({ savedQs: settings.savedQueries, removedQ });
       this.initExistingSavedQs(this.savedQsDiv);
 
-      const { name, query } = removedQ[0];
-
-      this.app.commands.removeCommand(`advanced-cursors:AC-${name} → ${query}`);
-      this.app.commands.removeCommand(
-        `advanced-cursors:AC-next-${name} → ${query}`
-      );
+      this.app.commands.removeCommand(cmdRunId(removedQ));
+      this.app.commands.removeCommand(cmdNextId(removedQ));
     } catch (error) {
       console.log(error);
       new Notice(
@@ -120,7 +117,7 @@ export class AddQModal extends Modal {
   plugin: ACPlugin;
   settingsTab: ACSettingTab;
   savedQsDiv: HTMLDivElement;
-  existingQ: SavedQuery;
+  existingQ: Query;
   i: number;
 
   constructor(
@@ -128,7 +125,7 @@ export class AddQModal extends Modal {
     plugin: ACPlugin,
     settingsTab: ACSettingTab,
     savedQsDiv: HTMLDivElement,
-    existingQ: SavedQuery,
+    existingQ: Query,
     i: number
   ) {
     super(app);
@@ -145,7 +142,6 @@ export class AddQModal extends Modal {
     new AddQComponent({
       target: contentEl,
       props: {
-        app: this.app,
         plugin: this.plugin,
         modal: this,
         settingsTab: this.settingsTab,

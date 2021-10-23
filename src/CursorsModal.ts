@@ -1,4 +1,5 @@
 import { App, Editor, EditorSelectionOrCaret, Modal, Notice } from "obsidian";
+import type { Query } from "src/interfaces";
 import type ACPlugin from "src/main";
 import QueryModal from "./Components/QueryModal.svelte";
 
@@ -35,13 +36,12 @@ export class CursorsModal extends Modal {
    * @returns EditorSelectionOrCaret
    */
   getSelectionsFromQuery(
+    q: Query,
     editor: Editor,
     content: string,
-    offset: number,
-    query: string,
-    regexQ: boolean,
-    flags: string
+    offset: number
   ): EditorSelectionOrCaret[] {
+    const { query, regexQ, flags } = q;
     console.log({ content, offset });
     let regex: RegExp;
     if (regexQ) {
@@ -70,21 +70,13 @@ export class CursorsModal extends Modal {
     return selections;
   }
 
-  submit = (
-    query: string,
-    selection: string,
-    offset: number,
-    regexQ: boolean,
-    flags: string = ""
-  ) => {
+  submit = (q: Query, selection: string, offset: number) => {
     try {
       const selections = this.getSelectionsFromQuery(
+        q,
         this.editor,
         selection,
-        offset,
-        query,
-        regexQ,
-        flags
+        offset
       );
 
       new Notice(`${selections.length} matches found.`);

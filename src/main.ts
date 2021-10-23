@@ -1,13 +1,12 @@
 import {
-  App,
   Editor,
   EditorPosition,
   EditorSelectionOrCaret,
   Notice,
-  Platform,
   Plugin,
 } from "obsidian";
-import type { SavedQuery, Settings as ACSettings } from "src/interfaces";
+import type { Query, Settings as ACSettings } from "src/interfaces";
+import { cmdNextId, cmdNextName, cmdRunId, cmdRunName } from "src/utils";
 import { CursorsModal } from "./CursorsModal";
 import { ACSettingTab } from "./SettingTab";
 
@@ -49,10 +48,10 @@ export default class ACPlugin extends Plugin {
     });
 
     this.settings.savedQueries.forEach((savedQ) => {
-      this.addACCommand(savedQ);
+      this.addRunCmd(savedQ);
     });
     this.settings.savedQueries.forEach((savedQ) => {
-      this.addSelectInstanceCommand(savedQ);
+      this.addNextCmd(savedQ);
     });
 
     this.addCommand({
@@ -74,26 +73,24 @@ export default class ACPlugin extends Plugin {
     this.addSettingTab(new ACSettingTab(this.app, this));
   }
 
-  addACCommand(savedQ: SavedQuery) {
-    const { name, query, regexQ, flags } = savedQ;
+  addRunCmd(q: Query) {
     this.addCommand({
-      id: `AC-${name} → ${query}`,
-      name: `Run query: ${name} → ${query}`,
+      id: cmdRunId(q),
+      name: cmdRunName(q),
       editorCallback: (editor: Editor) => {
         const cursorModal = new CursorsModal(this.app, editor, this);
         const { selection, offset } = cursorModal.getSelectionAndOffset();
-        cursorModal.submit(query, selection, offset, regexQ, flags);
+        cursorModal.submit(q, selection, offset);
       },
     });
   }
 
-  addSelectInstanceCommand(savedQ: SavedQuery) {
-    const { name, query, regexQ, flags } = savedQ;
+  addNextCmd(q: Query) {
     this.addCommand({
-      id: `AC-next-${name} → ${query}`,
-      name: `Next Instance: ${name} → ${query}`,
+      id: cmdNextId(q),
+      name: cmdNextName(q),
       editorCallback: (editor: Editor) => {
-        this.selectNextInstance(editor, false, savedQ);
+        this.selectNextInstance(editor, false, q);
       },
     });
   }
@@ -184,11 +181,7 @@ export default class ACPlugin extends Plugin {
     }
   }
 
-  selectNextInstance(
-    editor: Editor,
-    appendQ = false,
-    existingQ?: SavedQuery
-  ) {
+  selectNextInstance(editor: Editor, appendQ = false, existingQ?: Query) {
     const { currSelection, headOffset, anchorOffset, head, anchor } =
       this.getCurrSelection(editor);
 

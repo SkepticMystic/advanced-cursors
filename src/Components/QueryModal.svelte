@@ -1,13 +1,12 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import type { CursorsModal } from "src/CursorsModal";
   import type ACPlugin from "src/main";
+  import { onMount } from "svelte";
 
   export let modal: CursorsModal;
   export let plugin: ACPlugin;
 
   let inputEl: HTMLInputElement;
-  let submitButton: HTMLButtonElement;
   let regexQEl: HTMLInputElement;
 
   onMount(() => inputEl.focus());
@@ -18,8 +17,9 @@
   <button
     on:click={() => {
       const query = inputEl.value;
+      const q = { name: "", query, flags: "", regexQ: regexQEl.checked };
       const { selection, offset } = modal.getSelectionAndOffset();
-      modal.submit(query, selection, offset, regexQEl.checked);
+      modal.submit(q, selection, offset);
     }}>Submit</button
   >
 
@@ -36,12 +36,12 @@
           on:click={(e) => {
             // @ts-ignore
             const name = e.target.textContent;
-            const { query, regexQ, flags } = plugin.settings.savedQueries.find(
+            const q = plugin.settings.savedQueries.find(
               (savedQ) => savedQ.name === name
             );
 
             const { selection, offset } = modal.getSelectionAndOffset();
-            modal.submit(query, selection, offset, regexQ, flags);
+            modal.submit(q, selection, offset);
           }}
         >
           {savedQ.name}
@@ -52,11 +52,11 @@
           on:click={(e) => {
             // @ts-ignore
             const query = e.target.textContent;
-            const { regexQ, flags } = plugin.settings.savedQueries.find(
+            const q = plugin.settings.savedQueries.find(
               (savedQ) => savedQ.query === query
             );
             const { selection, offset } = modal.getSelectionAndOffset();
-            modal.submit(query, selection, offset, regexQ, flags);
+            modal.submit(q, selection, offset);
           }}
         >
           {savedQ.query}

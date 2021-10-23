@@ -1,4 +1,4 @@
-export interface SavedQuery {
+export interface Query {
   name: string;
   query: string;
   regexQ: boolean;
@@ -6,5 +6,5 @@ export interface SavedQuery {
 }
 
 export interface Settings {
-  savedQueries: SavedQuery[];
+  savedQueries: Query[];
 }
