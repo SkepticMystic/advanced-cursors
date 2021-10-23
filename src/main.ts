@@ -216,11 +216,19 @@ export default class MyPlugin extends Plugin {
     if (nextI > -1) {
       const editorSelection = this.createSelection(editor, nextI, toSelect);
       this.setSelections(appendQ, editor, editorSelection);
+      editor.scrollIntoView({
+        from: editorSelection.anchor,
+        to: editorSelection.head,
+      });
     } else {
       const loopedI = content.indexOf(toSelect);
       if (loopedI > -1) {
         const editorSelection = this.createSelection(editor, loopedI, toSelect);
         this.setSelections(appendQ, editor, editorSelection);
+        editor.scrollIntoView({
+          from: editorSelection.anchor,
+          to: editorSelection.head,
+        });
         new Notice(`🔁: First "${toSelect}"`);
       } else {
         new Notice(
