@@ -6,7 +6,13 @@ import {
   Plugin,
 } from "obsidian";
 import type { Query, Settings as ACSettings } from "src/interfaces";
-import { cmdNextId, cmdNextName, cmdRunId, cmdRunName } from "src/utils";
+import {
+  cmdNextId,
+  cmdNextName,
+  cmdRunId,
+  cmdRunName,
+  createRegex,
+} from "src/utils";
 import { CursorsModal } from "./CursorsModal";
 import { ACSettingTab } from "./SettingTab";
 
@@ -201,7 +207,8 @@ export default class ACPlugin extends Plugin {
     let nextI;
     if (existingQ) {
       const offset = editor.posToOffset(editor.getCursor());
-      nextI = content.indexOf(existingQ.query, offset);
+
+      const regex = createRegex(existingQ);
     } else {
       nextI = content.indexOf(toSelect, headOffset);
     }
