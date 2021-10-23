@@ -31,7 +31,7 @@ export class ACSettingTab extends PluginSettingTab {
         (but) => {
           but.addEventListener("click", async () => {
             savedQLi.remove();
-            this.removeSavedQ(i);
+            await this.removeSavedQ(i);
           });
         }
       );
@@ -43,7 +43,7 @@ export class ACSettingTab extends PluginSettingTab {
           cls: "editQButton",
         },
         (but) => {
-          but.addEventListener("click", async () => {
+          but.addEventListener("click", () => {
             console.log("editing" + i);
             this.editSavedQ(i);
           });

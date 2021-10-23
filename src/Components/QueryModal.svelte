@@ -16,9 +16,9 @@
 <div class="inputEls">
   <input bind:this={inputEl} type="text" placeholder="Search Query" />
   <button
-    on:click={async () => {
+    on:click={() => {
       const query = inputEl.value;
-      const { selection, offset } = await modal.getSelectionAndOffset();
+      const { selection, offset } = modal.getSelectionAndOffset();
       modal.submit(query, selection, offset, regexQEl.checked);
     }}>Submit</button
   >
@@ -33,14 +33,14 @@
       <li class="savedQ">
         <span
           class="savedQ-name"
-          on:click={async (e) => {
+          on:click={(e) => {
             // @ts-ignore
             const name = e.target.textContent;
             const { query, regexQ, flags } = plugin.settings.savedQueries.find(
               (savedQ) => savedQ.name === name
             );
 
-            const { selection, offset } = await modal.getSelectionAndOffset();
+            const { selection, offset } = modal.getSelectionAndOffset();
             modal.submit(query, selection, offset, regexQ, flags);
           }}
         >
@@ -49,13 +49,13 @@
         <span>→</span>
         <span
           class="savedQ-query"
-          on:click={async (e) => {
+          on:click={(e) => {
             // @ts-ignore
             const query = e.target.textContent;
             const { regexQ, flags } = plugin.settings.savedQueries.find(
               (savedQ) => savedQ.query === query
             );
-            const { selection, offset } = await modal.getSelectionAndOffset();
+            const { selection, offset } = modal.getSelectionAndOffset();
             modal.submit(query, selection, offset, regexQ, flags);
           }}
         >

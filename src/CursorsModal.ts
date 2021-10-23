@@ -14,14 +14,13 @@ export class CursorsModal extends Modal {
   /**
    * If something is selected, return that, and the offset inside the content. Otherwise return the entire content of the note
    */
-  async getSelectionAndOffset() {
+  getSelectionAndOffset() {
     const selection = this.editor.getSelection();
     const offset = this.editor.posToOffset(this.editor.getCursor("from"));
     if (selection !== "") {
       return { selection, offset };
     } else {
-      const currFile = this.app.workspace.getActiveFile();
-      const content = await this.app.vault.cachedRead(currFile);
+      const content = this.editor.getValue();
       return { selection: content, offset: 0 };
     }
   }

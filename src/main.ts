@@ -58,7 +58,7 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: "move-to-next-match",
       name: "Move to next instance of current selection",
-      editorCallback: async (editor: Editor) => {
+      editorCallback: (editor: Editor) => {
         this.selectNextInstance(editor);
       },
     });
@@ -66,7 +66,7 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: "add-next-match-to-selections",
       name: "Add next instance of current selection to selections",
-      editorCallback: async (editor: Editor) => {
+      editorCallback: (editor: Editor) => {
         this.selectNextInstance(editor, true);
       },
     });
@@ -79,9 +79,9 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: `AC-${name} → ${query}`,
       name: `Run query: ${name} → ${query}`,
-      editorCallback: async (editor: Editor) => {
+      editorCallback: (editor: Editor) => {
         const cursorModal = new CursorsModal(this.app, editor, this);
-        const { selection, offset } = await cursorModal.getSelectionAndOffset();
+        const { selection, offset } = cursorModal.getSelectionAndOffset();
         cursorModal.submit(query, selection, offset, regexQ, flags);
       },
     });
@@ -92,8 +92,8 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: `AC-next-${name} → ${query}`,
       name: `Next Instance: ${name} → ${query}`,
-      editorCallback: async (editor: Editor) => {
-        await this.selectNextInstance(editor, false, savedQ);
+      editorCallback: (editor: Editor) => {
+        this.selectNextInstance(editor, false, savedQ);
       },
     });
   }
@@ -184,7 +184,7 @@ export default class ACPlugin extends Plugin {
     }
   }
 
-  async selectNextInstance(
+  selectNextInstance(
     editor: Editor,
     appendQ = false,
     existingQ?: SavedQuery
@@ -198,8 +198,7 @@ export default class ACPlugin extends Plugin {
       return;
     }
 
-    const currFile = this.app.workspace.getActiveFile();
-    const content = await this.app.vault.read(currFile);
+    const content = editor.getValue();
 
     let toSelect = currSelection;
     if (existingQ) {
