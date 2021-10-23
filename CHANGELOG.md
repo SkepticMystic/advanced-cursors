@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.23](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.22...0.0.23) (2021-10-23)
+
+
+### Features
+
+* :sparkles: Commands for "Select next instance of {saved query}" ([3cda8a5](https://github.com/SkepticMystic/advanced-cursors/commit/3cda8a5e88a4e53487c2c97b0c4a280c9e19fa86))
+
+
+### Bug Fixes
+
+* :bug: Fix [#7](https://github.com/SkepticMystic/advanced-cursors/issues/7): Scroll next instance into view ([231ef96](https://github.com/SkepticMystic/advanced-cursors/commit/231ef960c26f71738668a7f0ff9ec8cc8de368ef))
+
 ### [0.0.22](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.21...0.0.22) (2021-10-22)
 
 ### [0.0.21](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.20...0.0.21) (2021-10-22)
