@@ -20,6 +20,7 @@
   onMount(() => nameEl.focus());
 
   async function onClick(i: number) {
+    console.log({ i });
     const name = nameEl.value;
     const query = queryEl.value;
     const { savedQueries } = plugin.settings;
@@ -49,6 +50,9 @@
 
         // Remove old command
         app.commands.removeCommand(`advanced-cursors:AC-${name} → ${query}`);
+        app.commands.removeCommand(
+          `advanced-cursors:AC-next-${name} → ${query}`
+        );
       } else {
         plugin.settings.savedQueries.push(newQ);
         new Notice(`${name} → ${query} added.`);
@@ -59,7 +63,8 @@
       settingsTab.initExistingSavedQs(modal.savedQsDiv);
 
       //   Add new plugin command
-      plugin.addACCommand(newQ, app);
+      plugin.addACCommand(newQ);
+      plugin.addSelectInstanceCommand(newQ);
       modal.close();
     }
   }

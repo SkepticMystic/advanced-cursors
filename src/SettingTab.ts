@@ -80,6 +80,9 @@ export class SettingTab extends PluginSettingTab {
       const { name, query } = removedQ[0];
 
       this.app.commands.removeCommand(`advanced-cursors:AC-${name} → ${query}`);
+      this.app.commands.removeCommand(
+        `advanced-cursors:AC-next-${name} → ${query}`
+      );
     } catch (error) {
       console.log(error);
       new Notice(

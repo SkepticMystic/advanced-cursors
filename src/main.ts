@@ -49,23 +49,10 @@ export default class MyPlugin extends Plugin {
     });
 
     this.settings.savedQueries.forEach((savedQ) => {
-      const { name, query } = savedQ;
-      this.addCommand({
-        id: `AC-${name} → ${query}`,
-        name: `Run query: ${name} → ${query}`,
-        editorCallback: async (editor: Editor) => {
-          const cursorModal = new CursorsModal(this.app, editor, this);
-          const { selection, offset } =
-            await cursorModal.getSelectionAndOffset();
-          cursorModal.submit(
-            query,
-            selection,
-            offset,
-            savedQ.regexQ,
-            savedQ.flags
-          );
-        },
-      });
+      this.addACCommand(savedQ);
+    });
+    this.settings.savedQueries.forEach((savedQ) => {
+      this.addSelectInstanceCommand(savedQ);
     });
 
     this.addCommand({
@@ -87,15 +74,26 @@ export default class MyPlugin extends Plugin {
     this.addSettingTab(new SettingTab(this.app, this));
   }
 
-  addACCommand(savedQ: SavedQuery, app: App) {
+  addACCommand(savedQ: SavedQuery) {
     const { name, query, regexQ, flags } = savedQ;
     this.addCommand({
       id: `AC-${name} → ${query}`,
       name: `Run query: ${name} → ${query}`,
       editorCallback: async (editor: Editor) => {
-        const cursorModal = new CursorsModal(app, editor, this);
+        const cursorModal = new CursorsModal(this.app, editor, this);
         const { selection, offset } = await cursorModal.getSelectionAndOffset();
         cursorModal.submit(query, selection, offset, regexQ, flags);
+      },
+    });
+  }
+
+  addSelectInstanceCommand(savedQ: SavedQuery) {
+    const { name, query, regexQ, flags } = savedQ;
+    this.addCommand({
+      id: `AC-next-${name} → ${query}`,
+      name: `Next Instance: ${name} → ${query}`,
+      editorCallback: async (editor: Editor) => {
+        await this.selectNextInstance(editor, false, savedQ);
       },
     });
   }
@@ -168,15 +166,15 @@ export default class MyPlugin extends Plugin {
         const currRange = editor.cm.state.wordAt(
           editor.posToOffset(editor.getCursor())
         );
-        const fromPos = editor.offsetToPos(currRange.fromOffset);
-        const toPos = editor.offsetToPos(currRange.toOffset);
-        currSelection = editor.getRange(fromPos, toPos);
+        const anchor = editor.offsetToPos(currRange.fromOffset);
+        const head = editor.offsetToPos(currRange.toOffset);
+        currSelection = editor.getRange(anchor, head);
         return {
           currSelection,
           headOffset,
           anchorOffset,
-          anchor: fromPos,
-          head: toPos,
+          anchor,
+          head,
         };
       } else {
         throw new Error("Cannot determine if cm5 or cm6");
@@ -186,42 +184,47 @@ export default class MyPlugin extends Plugin {
     }
   }
 
-  async selectNextInstance(editor: Editor, appendQ = false) {
-    const currFile = this.app.workspace.getActiveFile();
-    const content = await this.app.vault.read(currFile);
-
+  async selectNextInstance(
+    editor: Editor,
+    appendQ = false,
+    existingQ?: SavedQuery
+  ) {
     const { currSelection, headOffset, anchorOffset, head, anchor } =
       this.getCurrSelection(editor);
 
-    if (!editor.somethingSelected()) {
+    if (!editor.somethingSelected() && !existingQ) {
       console.log("selecting first ins");
-      console.log({ anchor, head });
       editor.setSelection(anchor, head);
       return;
     }
 
-    const nextI = content.indexOf(currSelection, headOffset);
+    const currFile = this.app.workspace.getActiveFile();
+    const content = await this.app.vault.read(currFile);
 
+    let toSelect = currSelection;
+    if (existingQ) {
+      toSelect = existingQ.query;
+    }
+    console.log({ toSelect });
+    let nextI;
+    if (existingQ) {
+      const offset = editor.posToOffset(editor.getCursor());
+      nextI = content.indexOf(existingQ.query, offset);
+    } else {
+      nextI = content.indexOf(toSelect, headOffset);
+    }
     if (nextI > -1) {
-      const editorSelection = this.createSelection(
-        editor,
-        nextI,
-        currSelection
-      );
+      const editorSelection = this.createSelection(editor, nextI, toSelect);
       this.setSelections(appendQ, editor, editorSelection);
     } else {
-      const loopedI = content.indexOf(currSelection);
+      const loopedI = content.indexOf(toSelect);
       if (loopedI > -1) {
-        const editorSelection = this.createSelection(
-          editor,
-          loopedI,
-          currSelection
-        );
+        const editorSelection = this.createSelection(editor, loopedI, toSelect);
         this.setSelections(appendQ, editor, editorSelection);
-        new Notice(`🔁: First "${currSelection}"`);
+        new Notice(`🔁: First "${toSelect}"`);
       } else {
         new Notice(
-          `Cannot find next instance of "${currSelection}" anywhere else in file.`
+          `Cannot find next instance of "${toSelect}" anywhere else in file.`
         );
       }
     }
