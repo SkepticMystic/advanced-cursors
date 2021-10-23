@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { CursorsModal } from "src/CursorsModal";
-  import type MyPlugin from "src/main";
+  import type ACPlugin from "src/main";
 
   export let modal: CursorsModal;
-  export let plugin: MyPlugin;
+  export let plugin: ACPlugin;
 
   let inputEl: HTMLInputElement;
   let submitButton: HTMLButtonElement;

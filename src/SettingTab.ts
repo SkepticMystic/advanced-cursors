@@ -1,13 +1,13 @@
 import { App, Modal, Notice, PluginSettingTab } from "obsidian";
 import type { SavedQuery } from "src/interfaces";
-import type MyPlugin from "src/main";
+import type ACPlugin from "src/main";
 import AddQComponent from "./Components/AddQComponent.svelte";
 
-export class SettingTab extends PluginSettingTab {
-  plugin: MyPlugin;
+export class ACSettingTab extends PluginSettingTab {
+  plugin: ACPlugin;
   savedQsDiv: HTMLDivElement;
 
-  constructor(app: App, plugin: MyPlugin) {
+  constructor(app: App, plugin: ACPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }
@@ -117,16 +117,16 @@ export class SettingTab extends PluginSettingTab {
 }
 
 export class AddQModal extends Modal {
-  plugin: MyPlugin;
-  settingsTab: SettingTab;
+  plugin: ACPlugin;
+  settingsTab: ACSettingTab;
   savedQsDiv: HTMLDivElement;
   existingQ: SavedQuery;
   i: number;
 
   constructor(
     app: App,
-    plugin: MyPlugin,
-    settingsTab: SettingTab,
+    plugin: ACPlugin,
+    settingsTab: ACSettingTab,
     savedQsDiv: HTMLDivElement,
     existingQ: SavedQuery,
     i: number

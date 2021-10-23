@@ -1,12 +1,12 @@
 import { App, Editor, EditorSelectionOrCaret, Modal, Notice } from "obsidian";
-import type MyPlugin from "src/main";
+import type ACPlugin from "src/main";
 import QueryModal from "./Components/QueryModal.svelte";
 
 export class CursorsModal extends Modal {
   editor: Editor;
-  plugin: MyPlugin;
+  plugin: ACPlugin;
 
-  constructor(app: App, editor: Editor, plugin: MyPlugin) {
+  constructor(app: App, editor: Editor, plugin: ACPlugin) {
     super(app);
     this.editor = editor;
     this.plugin = plugin;

@@ -7,11 +7,11 @@ import {
   Platform,
   Plugin,
 } from "obsidian";
-import type { SavedQuery, Settings } from "src/interfaces";
+import type { SavedQuery, Settings as ACSettings } from "src/interfaces";
 import { CursorsModal } from "./CursorsModal";
-import { SettingTab } from "./SettingTab";
+import { ACSettingTab } from "./SettingTab";
 
-const DEFAULT_SETTINGS: Settings = {
+const DEFAULT_SETTINGS: ACSettings = {
   savedQueries: [],
 };
 
@@ -32,8 +32,8 @@ declare module "obsidian" {
   }
 }
 
-export default class MyPlugin extends Plugin {
-  settings: Settings;
+export default class ACPlugin extends Plugin {
+  settings: ACSettings;
 
   async onload() {
     console.log("Loading advanced cursors");
@@ -71,7 +71,7 @@ export default class MyPlugin extends Plugin {
       },
     });
 
-    this.addSettingTab(new SettingTab(this.app, this));
+    this.addSettingTab(new ACSettingTab(this.app, this));
   }
 
   addACCommand(savedQ: SavedQuery) {

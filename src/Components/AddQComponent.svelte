@@ -1,14 +1,14 @@
 <script lang="ts">
   import { App, Notice } from "obsidian";
   import type { SavedQuery } from "src/interfaces";
-  import type MyPlugin from "src/main";
-  import type { AddQModal, SettingTab } from "src/SettingTab";
+  import type ACPlugin from "src/main";
+  import type { AddQModal, ACSettingTab } from "src/SettingTab";
   import { onMount } from "svelte";
 
   export let app: App;
-  export let plugin: MyPlugin;
+  export let plugin: ACPlugin;
   export let modal: AddQModal;
-  export let settingsTab: SettingTab;
+  export let settingsTab: ACSettingTab;
   export let existingQ: SavedQuery;
   export let i: number;
 
