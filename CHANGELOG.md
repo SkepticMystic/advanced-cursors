@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.27](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.26...0.0.27) (2021-10-24)
+
+
+### Bug Fixes
+
+* :bug: Fix [#8](https://github.com/SkepticMystic/advanced-cursors/issues/8): 'm' flag ([e813997](https://github.com/SkepticMystic/advanced-cursors/commit/e8139975c48e2d1382434afd1849101f4c565279))
+
 ### [0.0.26](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.25...0.0.26) (2021-10-24)
 
 ### [0.0.25](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.24...0.0.25) (2021-10-24)
