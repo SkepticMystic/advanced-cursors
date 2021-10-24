@@ -200,20 +200,16 @@ export default class ACPlugin extends Plugin {
     const content = editor.getValue();
 
     let toSelect = currSelection;
-    if (existingQ) {
-      toSelect = existingQ.query;
-    }
-    console.log({ toSelect });
     let nextI;
     if (existingQ) {
       const offset = editor.posToOffset(editor.getCursor());
 
       const regex = createRegex(existingQ);
       const matches = [...content.matchAll(regex)];
-      nextI = matches.find((match) => match.index >= offset)?.index;
+      const nextMatch = matches.find((match) => match.index >= offset);
+      nextI = nextMatch?.index;
+      toSelect = nextMatch?.[0] ?? currSelection;
       console.log({ matches, nextI });
-
-      // nextI = content.indexOf(existingQ.query, offset);
     } else {
       nextI = content.indexOf(toSelect, headOffset);
     }
@@ -225,10 +221,13 @@ export default class ACPlugin extends Plugin {
         to: editorSelection.head,
       });
     } else {
-      const regex = createRegex(existingQ);
-      const matches = [...content.matchAll(regex)];
-      const loopedI = matches[0].index;
-      console.log({ matches, loopedI });
+      let loopedI: number;
+      if (existingQ) {
+        const regex = createRegex(existingQ);
+        loopedI = [...content.matchAll(regex)]?.[0]?.index;
+      } else {
+        loopedI = content.indexOf(toSelect);
+      }
 
       if (loopedI > -1) {
         const editorSelection = this.createSelection(editor, loopedI, toSelect);

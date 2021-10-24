@@ -101,3 +101,11 @@ If you prefer bullet points to not have an extra line between them, use this to 
 
 - 3
 ```
+
+#### Select Sentences
+
+```re
+/\b.*?\. /
+```
+
+Select the shortest string between a word boundary `\b` and a fullstop `\.`
