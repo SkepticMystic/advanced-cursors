@@ -67,4 +67,37 @@ As well as in the command palette:
 
 ![image](https://user-images.githubusercontent.com/70717676/138410368-bc063007-f3a6-4c4c-b7a4-2f24ebcd3748.png)
 
+## Query Examples
 
+The following is a list of queries created by users of the plugin:
+
+#### Bullet List followed by Numbered List
+
+```re
+/- +[\d\w][\.\)] /
+```
+
+Matches a bullet point followed by a numbered bullet:
+
+- `- 1. `
+- `- 1) `
+- `- a. `
+- `- a)`
+
+Having both is usually redundant, so this allows you to remove one or the other.
+
+#### Disjoint Bullet Items
+
+```re
+/\n\n>? ?[-\d]+\.?/
+```
+
+If you prefer bullet points to not have an extra line between them, use this to find offending bullet points.
+
+```md
+- 1
+
+- 2
+
+- 3
+```
