@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.28](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.27...0.0.28) (2021-10-24)
+
+
+### Bug Fixes
+
+* :bug: selectNextInstance used regexQuery.length to extend selectionRange.head ([d339183](https://github.com/SkepticMystic/advanced-cursors/commit/d339183bced2eaa953c7bc6d711f11c1c50fc942))
+
 ### [0.0.27](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.26...0.0.27) (2021-10-24)
 
 
