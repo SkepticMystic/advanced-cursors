@@ -209,6 +209,11 @@ export default class ACPlugin extends Plugin {
       const offset = editor.posToOffset(editor.getCursor());
 
       const regex = createRegex(existingQ);
+      const matches = [...content.matchAll(regex)];
+      console.log({ matches });
+      nextI = matches.find((match) => match.index >= offset)?.index;
+
+      // nextI = content.indexOf(existingQ.query, offset);
     } else {
       nextI = content.indexOf(toSelect, headOffset);
     }
