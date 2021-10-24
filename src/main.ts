@@ -210,8 +210,8 @@ export default class ACPlugin extends Plugin {
 
       const regex = createRegex(existingQ);
       const matches = [...content.matchAll(regex)];
-      console.log({ matches });
       nextI = matches.find((match) => match.index >= offset)?.index;
+      console.log({ matches, nextI });
 
       // nextI = content.indexOf(existingQ.query, offset);
     } else {
@@ -225,7 +225,11 @@ export default class ACPlugin extends Plugin {
         to: editorSelection.head,
       });
     } else {
-      const loopedI = content.indexOf(toSelect);
+      const regex = createRegex(existingQ);
+      const matches = [...content.matchAll(regex)];
+      const loopedI = matches[0].index;
+      console.log({ matches, loopedI });
+
       if (loopedI > -1) {
         const editorSelection = this.createSelection(editor, loopedI, toSelect);
         this.setSelections(appendQ, editor, editorSelection);

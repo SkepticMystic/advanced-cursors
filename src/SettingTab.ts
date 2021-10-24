@@ -45,7 +45,6 @@ export class ACSettingTab extends PluginSettingTab {
         },
         (but) => {
           but.addEventListener("click", () => {
-            console.log("editing" + i);
             this.editSavedQ(i);
           });
         }
@@ -142,6 +141,7 @@ export class AddQModal extends Modal {
     new AddQComponent({
       target: contentEl,
       props: {
+        app: this.app,
         plugin: this.plugin,
         modal: this,
         settingsTab: this.settingsTab,
