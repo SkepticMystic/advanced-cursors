@@ -71,10 +71,22 @@ As well as in the command palette:
 
 The following is a list of queries created by users of the plugin:
 
+#### Unfinished Tasks
+
+```re
+/^- \[ ] .*$/m
+```
+
+#### Completed Tasks
+
+```re
+/^- \[x] .*$/m
+```
+
 #### Bullet List followed by Numbered List
 
 ```re
-/- +[\d\w][\.\)] /
+/^- +[\d\w][\.\)] /m
 ```
 
 Matches a bullet point followed by a numbered bullet:
@@ -105,7 +117,19 @@ If you prefer bullet points to not have an extra line between them, use this to 
 #### Select Sentences
 
 ```re
-/\b.*?\. /
+/\b.*?\.(?=\s|$)/gs
 ```
 
 Select the shortest string between a word boundary `\b` and a fullstop `\.`
+
+#### DOIs
+
+```re
+/10\.[^\s]+\/[^\s]*\w/
+```
+
+#### URLs
+
+```re
+/\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|(([^\s()<>]+|(([^\s()<>]+)))))+(?:(([^\s()<>]+|(([^\s()<>]+))))|[^\s`!()[]{};:'".,<>?«»“”‘’]))/
+```
