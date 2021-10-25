@@ -61,8 +61,9 @@ export class CursorsModal extends Modal {
     return selections;
   }
 
-  submit = (q: Query, selection: string, offset: number) => {
+  submit = (q: Query) => {
     try {
+      const { selection, offset } = this.getSelectionAndOffset();
       const selections = this.getSelectionsFromQuery(
         q,
         this.editor,

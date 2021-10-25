@@ -4,8 +4,10 @@ import {
   EditorSelectionOrCaret,
   Notice,
   Plugin,
+  WorkspaceLeaf,
 } from "obsidian";
-import type { Query, Settings as ACSettings } from "src/interfaces";
+import type { ACSettings as ACSettings, Query } from "src/interfaces";
+import SavedQView from "src/SavedQView";
 import {
   cmdNextId,
   cmdNextName,
@@ -13,12 +15,9 @@ import {
   cmdRunName,
   createRegex,
 } from "src/utils";
+import { DEFAULT_SETTINGS, VIEW_TYPE_AC } from "./const";
 import { CursorsModal } from "./CursorsModal";
 import { ACSettingTab } from "./SettingTab";
-
-const DEFAULT_SETTINGS: ACSettings = {
-  savedQueries: [],
-};
 
 declare module "obsidian" {
   interface App {
@@ -39,6 +38,7 @@ declare module "obsidian" {
 
 export default class ACPlugin extends Plugin {
   settings: ACSettings;
+  view: SavedQView;
 
   async onload() {
     console.log("Loading advanced cursors");
@@ -76,6 +76,14 @@ export default class ACPlugin extends Plugin {
       },
     });
 
+    this.app.workspace.onLayoutReady(async () => {
+      this.registerView(
+        VIEW_TYPE_AC,
+        (leaf: WorkspaceLeaf) => (this.view = new SavedQView(leaf, this))
+      );
+      await this.initView(VIEW_TYPE_AC);
+    });
+
     this.addSettingTab(new ACSettingTab(this.app, this));
   }
 
@@ -85,8 +93,7 @@ export default class ACPlugin extends Plugin {
       name: cmdRunName(q),
       editorCallback: (editor: Editor) => {
         const cursorModal = new CursorsModal(this.app, editor, this);
-        const { selection, offset } = cursorModal.getSelectionAndOffset();
-        cursorModal.submit(q, selection, offset);
+        cursorModal.submit(q);
       },
     });
   }
@@ -246,7 +253,24 @@ export default class ACPlugin extends Plugin {
     }
   }
 
-  onunload() {}
+  initView = async (type: string): Promise<void> => {
+    let leaf: WorkspaceLeaf = null;
+    for (leaf of this.app.workspace.getLeavesOfType(type)) {
+      if (leaf.view instanceof SavedQView) {
+        return;
+      }
+      await leaf.setViewState({ type: "empty" });
+      break;
+    }
+    (leaf ?? this.app.workspace.getRightLeaf(false)).setViewState({
+      type,
+      active: true,
+    });
+  };
+
+  onunload() {
+    this.app.workspace.detachLeavesOfType(VIEW_TYPE_AC);
+  }
 
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());

@@ -5,6 +5,6 @@ export interface Query {
   flags: string;
 }
 
-export interface Settings {
+export interface ACSettings {
   savedQueries: Query[];
 }

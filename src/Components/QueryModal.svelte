@@ -15,7 +15,8 @@
 
 <div class="inputEls">
   <input bind:this={queryEl} type="text" placeholder="Search Query" />
-  <button class="AC-submit-button"
+  <button
+    class="AC-submit-button"
     on:click={() => {
       const q = {
         name: "",
@@ -23,8 +24,7 @@
         flags: flagsEl.value,
         regexQ: regexQEl.checked,
       };
-      const { selection, offset } = modal.getSelectionAndOffset();
-      modal.submit(q, selection, offset);
+      modal.submit(q);
     }}>Submit</button
   >
 
@@ -40,8 +40,7 @@
         <span
           class="savedQ-name"
           on:click={(e) => {
-            const { selection, offset } = modal.getSelectionAndOffset();
-            modal.submit(q, selection, offset);
+            modal.submit(q);
           }}
         >
           {q.name}
@@ -50,8 +49,7 @@
         <span
           class="savedQ-query"
           on:click={(e) => {
-            const { selection, offset } = modal.getSelectionAndOffset();
-            modal.submit(q, selection, offset);
+            modal.submit(q);
           }}
         >
           /{q.query}/{q.flags}

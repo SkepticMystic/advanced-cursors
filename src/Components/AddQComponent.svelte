@@ -65,6 +65,8 @@
       //   Add new plugin command
       plugin.addRunCmd(newQ);
       plugin.addNextCmd(newQ);
+
+      plugin.view.draw();
       modal.close();
     }
   }
