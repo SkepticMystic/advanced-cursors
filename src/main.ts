@@ -188,6 +188,7 @@ export default class ACPlugin extends Plugin {
   }
 
   selectNextInstance(editor: Editor, appendQ = false, existingQ?: Query) {
+    // TODO const q = {...existingQ || newQ}
     const { currSelection, headOffset, anchorOffset, head, anchor } =
       this.getCurrSelection(editor);
 

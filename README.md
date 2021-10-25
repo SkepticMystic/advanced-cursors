@@ -133,3 +133,46 @@ Select the shortest string between a word boundary `\b` and a fullstop `\.`
 ```re
 /\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|(([^\s()<>]+|(([^\s()<>]+)))))+(?:(([^\s()<>]+|(([^\s()<>]+))))|[^\s`!()[]{};:'".,<>?«»“”‘’]))/
 ```
+
+#### Copy DEVONthink Link to Clipboard
+
+```re
+/\[Line\s\d{1,2}\]\(x-devonthink-item:\/\/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\?line=\d{1,2}\)/
+```
+
+- Look for all DT links in the note and copy then to clipboard;
+- Delete `\(x-devonthink-item:\/\/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\?line=\d{1,2}\)`
+- Paste in the end of the note.
+
+#### Capture all Highlights
+
+```re
+/(?<=\=\=).\*(?=\=\=)/
+
+```
+
+#### Capture a Specific HTML Tag
+
+```re
+/(?<=id=\"green"\>).*(?=\<)/
+```
+
+### Navigation Queries
+
+#### Navigate between Headers
+
+```re
+/^#+.*?$/m
+```
+
+#### Navigate between Backlinks (do not include block refs)
+
+```re
+/(?<=\[\[)(?!.*#\^).*(?=\]\])/
+```
+
+#### Navigate to a specific tag
+
+```re
+/#Tag/
+```
