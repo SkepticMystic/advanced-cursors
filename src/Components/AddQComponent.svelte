@@ -98,5 +98,7 @@
   <label for="regexQ">Regex</label>
 </div>
 <div>
-  <button on:click={() => onClick(i)}>{i === -1 ? "Submit" : "Edit"}</button>
+  <button class="AC-submit-button" on:click={() => onClick(i)}
+    >{i === -1 ? "Submit" : "Edit"}</button
+  >
 </div>

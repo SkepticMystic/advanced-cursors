@@ -17,9 +17,14 @@
 .savedQ-name:hover,
 .editQButton:hover,
 .deleteQButton:hover,
-.savedQ-query:hover {
+.savedQ-query:hover,
+.AC-submit-button:hover {
   background-color: var(--interactive-accent) !important;
   cursor: pointer;
+}
+
+.AC-submit-button:focus {
+  background-color: var(--interactive-accent) !important;
 }
 
 .savedQ-query {

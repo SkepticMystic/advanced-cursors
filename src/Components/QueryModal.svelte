@@ -15,7 +15,7 @@
 
 <div class="inputEls">
   <input bind:this={queryEl} type="text" placeholder="Search Query" />
-  <button
+  <button class="AC-submit-button"
     on:click={() => {
       const q = {
         name: "",
