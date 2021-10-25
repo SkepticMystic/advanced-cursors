@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.29](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.28...0.0.29) (2021-10-25)
+
+
+### Features
+
+* :sparkles: Fix: [#9](https://github.com/SkepticMystic/advanced-cursors/issues/9) Saved queries view! ([998622a](https://github.com/SkepticMystic/advanced-cursors/commit/998622a36cbc76f587e039d586dc7d187c37dc86))
+* :sparkles: Regex flags on cursorModal ([25a2403](https://github.com/SkepticMystic/advanced-cursors/commit/25a2403aa6b8bebffd446b600e4ff06aad52c8f8))
+
 ### [0.0.28](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.27...0.0.28) (2021-10-24)
 
 
