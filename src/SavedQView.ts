@@ -37,22 +37,28 @@ export default class SavedQView extends ItemView {
     const { settings } = this.plugin;
     const { contentEl } = this;
     contentEl.empty();
+    contentEl.style.padding = "5px 5px 0px 5px";
 
-    const listEl = contentEl.createEl("ol");
+    const qsDiv = contentEl.createDiv();
     settings.savedQueries.forEach((q) => {
-      const listItem = listEl.createEl("li", { cls: "savedQ" });
+      const qDiv = qsDiv.createDiv({ text: q.name, cls: "savedQ-name" });
+      qDiv.ariaLabel = `/${q.query}/${q.flags}`;
 
-      listItem.createSpan({ text: q.name, cls: "savedQ-name" });
-      listItem.createSpan({ text: " → " });
-      listItem.createSpan({ text: q.query });
-
-      listItem.addEventListener("click", () => {
+      qDiv.addEventListener("click", () => {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
-
         if (view) {
           const { editor } = view;
           const cursorModal = new CursorsModal(this.app, editor, this.plugin);
           cursorModal.submit(q);
+          editor.focus();
+        }
+      });
+
+      qDiv.addEventListener("contextmenu", () => {
+        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        if (view) {
+          const { editor } = view;
+          this.plugin.selectNextInstance(editor, false, q);
           editor.focus();
         }
       });
