@@ -1,6 +1,6 @@
 {
     "name": "advanced-cursors",
-    "version": "0.0.29",
+    "version": "0.0.30",
     "description": "Use multiple cursors even more powerfully",
     "main": "main.js",
     "scripts": {
