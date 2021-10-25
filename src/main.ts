@@ -2,10 +2,12 @@ import {
   Editor,
   EditorPosition,
   EditorSelectionOrCaret,
+  ItemView,
   Notice,
   Plugin,
   WorkspaceLeaf,
 } from "obsidian";
+import { addFeatherIcon } from "obsidian-community-lib";
 import type { ACSettings as ACSettings, Query } from "src/interfaces";
 import SavedQView from "src/SavedQView";
 import {
@@ -75,6 +77,8 @@ export default class ACPlugin extends Plugin {
         this.selectNextInstance(editor, true);
       },
     });
+
+    addFeatherIcon("mouse-pointer");
 
     this.app.workspace.onLayoutReady(async () => {
       this.registerView(
@@ -253,7 +257,10 @@ export default class ACPlugin extends Plugin {
     }
   }
 
-  initView = async (type: string): Promise<void> => {
+  initView = async <YourView extends ItemView>(
+    type: string
+    // viewClass: Constructor<YourView>
+  ): Promise<void> => {
     let leaf: WorkspaceLeaf = null;
     for (leaf of this.app.workspace.getLeavesOfType(type)) {
       if (leaf.view instanceof SavedQView) {
@@ -267,6 +274,11 @@ export default class ACPlugin extends Plugin {
       active: true,
     });
   };
+
+  // instanceQ<I extends View>(ins: I, thing: any) {
+  //   if (thing instanceof ins) {
+  //   }
+  // }
 
   onunload() {
     this.app.workspace.detachLeavesOfType(VIEW_TYPE_AC);

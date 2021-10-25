@@ -23,7 +23,7 @@ export default class SavedQView extends ItemView {
     return "Saved Queries";
   }
 
-  // icon = TRAIL_ICON;
+  icon = "feather-mouse-pointer";
 
   async onOpen(): Promise<void> {
     await this.draw();
