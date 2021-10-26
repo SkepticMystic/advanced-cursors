@@ -118,22 +118,19 @@ export default class ACPlugin extends Plugin {
 
   createSelection(
     editor: Editor,
-    nextI: number,
-    currSelection: string
+    nextFromOffset: number,
+    toSelect: string
   ): EditorSelectionOrCaret {
-    const { line, ch } = editor.offsetToPos(nextI);
-    const anchor: EditorPosition = {
-      ch,
-      line,
-    };
-    const head: EditorPosition = {
-      ch: ch + currSelection.length,
-      line,
-    };
+    const { line: lineA, ch: chA } = editor.offsetToPos(nextFromOffset);
+    const { line: lineH, ch: chH } = editor.offsetToPos(
+      nextFromOffset + toSelect.length
+    );
+    const anchor: EditorPosition = { ch: chA, line: lineA };
+    const head: EditorPosition = { ch: chH, line: lineH };
     return { anchor, head };
   }
 
-  reconstructCurrentSelections(selections: EditorSelectionOrCaret[]) {
+  reconstructSelections(selections: EditorSelectionOrCaret[]) {
     const newSelections: EditorSelectionOrCaret[] = [];
     selections.forEach((selection) => {
       newSelections.push({
@@ -152,112 +149,93 @@ export default class ACPlugin extends Plugin {
     if (appendQ) {
       const currSelections: EditorSelectionOrCaret[] = editor.listSelections();
 
-      const reconstructedSelections =
-        this.reconstructCurrentSelections(currSelections);
-      reconstructedSelections.push(editorSelection);
-      editor.setSelections(reconstructedSelections);
+      const reconSelections = this.reconstructSelections(currSelections);
+      reconSelections.push(editorSelection);
+      editor.setSelections(reconSelections);
     } else {
       editor.setSelections([editorSelection]);
     }
   }
 
-  getCurrSelection(editor: Editor) {
+  getToSelect(editor: Editor) {
     const { anchor, head } = editor.listSelections().last();
-    const anchorOffset = editor.posToOffset(anchor);
-    const headOffset = editor.posToOffset(head);
-    let currSelection: string;
+    const offsetA = editor.posToOffset(anchor);
+    const offsetH = editor.posToOffset(head);
+
+    let toSelect, wordH: EditorPosition, wordA: EditorPosition;
 
     if (!(anchor.line === head.line && anchor.ch === head.ch)) {
-      const currSelection = editor.getRange(anchor, head);
-      return { currSelection, headOffset, anchorOffset };
+      toSelect = editor.getRange(anchor, head);
+      return { toSelect, offsetH, offsetA };
     }
 
     try {
-      if (editor?.cm?.findWordAt) {
-        const wordRange = editor.cm.findWordAt(editor.getCursor());
-        const { anchor } = wordRange;
-        const { head } = wordRange;
-        currSelection = editor.getRange(anchor, head);
-
-        return { currSelection, headOffset, anchorOffset, head, anchor };
-      } else if (editor?.cm?.state.wordAt) {
-        const currRange = editor.cm.state.wordAt(
-          editor.posToOffset(editor.getCursor())
+      const cursor = editor.getCursor();
+      if (editor.cm?.findWordAt) {
+        const wordRange = editor.cm.findWordAt(cursor);
+        [wordA, wordH] = [wordRange.anchor, wordRange.head];
+        toSelect = editor.getRange(wordA, wordH);
+      } else if (editor.cm?.state.wordAt) {
+        const { fromOffset, toOffset } = editor.cm.state.wordAt(
+          editor.posToOffset(cursor)
         );
-        const anchor = editor.offsetToPos(currRange.fromOffset);
-        const head = editor.offsetToPos(currRange.toOffset);
-        currSelection = editor.getRange(anchor, head);
-        return {
-          currSelection,
-          headOffset,
-          anchorOffset,
-          anchor,
-          head,
-        };
+        [wordA, wordH] = [
+          editor.offsetToPos(fromOffset),
+          editor.offsetToPos(toOffset),
+        ];
+        toSelect = editor.getRange(wordA, wordH);
       } else {
         throw new Error("Cannot determine if cm5 or cm6");
       }
+      return { toSelect, offsetH, offsetA, wordA, wordH };
     } catch (error) {
       console.log(error);
     }
   }
 
-  selectNextInstance(editor: Editor, appendQ = false, existingQ?: Query) {
+  selectNextInstance(editor: Editor, appendQ = false, q?: Query) {
     // TODO const q = {...existingQ || newQ}
-    const { currSelection, headOffset, anchorOffset, head, anchor } =
-      this.getCurrSelection(editor);
+    let { toSelect, offsetH, wordA, wordH } = this.getToSelect(editor);
 
-    if (!editor.somethingSelected() && !existingQ) {
-      console.log("selecting first ins");
-      editor.setSelection(anchor, head);
+    // Set words under cursor
+    if (!editor.somethingSelected() && !q) {
+      editor.setSelection(wordA, wordH);
       return;
     }
 
     const content = editor.getValue();
 
-    let toSelect = currSelection;
-    let nextI;
-    if (existingQ) {
-      const offset = editor.posToOffset(editor.getCursor());
+    let nextFromOffset;
+    if (q) {
+      // ExistingQ and !somethingSelected
+      const fromOffset = editor.posToOffset(editor.getCursor());
 
-      const regex = createRegex(existingQ);
+      const regex = createRegex(q);
       const matches = [...content.matchAll(regex)];
-      const nextMatch = matches.find((match) => match.index >= offset);
-      nextI = nextMatch?.index;
-      toSelect = nextMatch?.[0] ?? currSelection;
-      console.log({ matches, nextI });
+
+      const match = matches.find((m) => m.index >= fromOffset) ?? matches[0];
+      nextFromOffset = match?.index;
+      toSelect = match?.[0] ?? toSelect;
     } else {
-      nextI = content.indexOf(toSelect, headOffset);
+      // No Q and nothing selected
+      nextFromOffset = content.indexOf(toSelect, offsetH);
+      if (nextFromOffset === -1) {
+        nextFromOffset = content.indexOf(toSelect);
+      }
     }
-    if (nextI > -1) {
-      const editorSelection = this.createSelection(editor, nextI, toSelect);
+    if (nextFromOffset > -1) {
+      const editorSelection = this.createSelection(
+        editor,
+        nextFromOffset,
+        toSelect
+      );
       this.setSelections(appendQ, editor, editorSelection);
       editor.scrollIntoView({
         from: editorSelection.anchor,
         to: editorSelection.head,
       });
     } else {
-      let loopedI: number;
-      if (existingQ) {
-        const regex = createRegex(existingQ);
-        loopedI = [...content.matchAll(regex)]?.[0]?.index;
-      } else {
-        loopedI = content.indexOf(toSelect);
-      }
-
-      if (loopedI > -1) {
-        const editorSelection = this.createSelection(editor, loopedI, toSelect);
-        this.setSelections(appendQ, editor, editorSelection);
-        editor.scrollIntoView({
-          from: editorSelection.anchor,
-          to: editorSelection.head,
-        });
-        new Notice(`🔁: First "${toSelect}"`);
-      } else {
-        new Notice(
-          `Cannot find next instance of "${toSelect}" anywhere else in file.`
-        );
-      }
+      new Notice(`No instance of ${toSelect} found anywhere in note.`);
     }
   }
 
