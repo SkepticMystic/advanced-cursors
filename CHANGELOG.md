@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.32](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.31...0.0.32) (2021-10-26)
+
+
+### Features
+
+* :sparkles: Fix [#15](https://github.com/SkepticMystic/advanced-cursors/issues/15): Save view state ([d43e494](https://github.com/SkepticMystic/advanced-cursors/commit/d43e494061519a21b2f7b4ec12a7713f2f62363a))
+
 ### [0.0.31](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.30...0.0.31) (2021-10-26)
 
 
