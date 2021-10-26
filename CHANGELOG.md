@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.39](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.38...0.0.39) (2021-10-26)
+
+
+### Features
+
+* :sparkles: `Prev` cmd for savedQs ([85c131e](https://github.com/SkepticMystic/advanced-cursors/commit/85c131e5b89b31c5df35596c96d421ceb53890fd))
+
 ### [0.0.38](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.37...0.0.38) (2021-10-26)
 
 
