@@ -45,7 +45,6 @@ declare module "obsidian" {
 export default class ACPlugin extends Plugin {
   settings: ACSettings;
   view: SavedQView;
-  lastQ: Query;
 
   async onload() {
     console.log("Loading advanced cursors");
