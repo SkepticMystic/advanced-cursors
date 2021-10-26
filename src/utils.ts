@@ -17,3 +17,8 @@ export const createRegex = (q: Query) => {
     return new RegExp(q.query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"), "g");
   }
 };
+
+export const displayRegex = (q: Query) => {
+  const { source } = createRegex(q);
+  return `/${source}/${q.flags}`;
+};

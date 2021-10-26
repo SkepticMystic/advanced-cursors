@@ -2,6 +2,7 @@ import { ItemView, MarkdownView, WorkspaceLeaf } from "obsidian";
 import { VIEW_TYPE_AC } from "src/const";
 import { CursorsModal } from "src/CursorsModal";
 import type ACPlugin from "src/main";
+import { displayRegex } from "src/utils";
 
 export default class SavedQView extends ItemView {
   private plugin: ACPlugin;
@@ -42,7 +43,7 @@ export default class SavedQView extends ItemView {
     const qsDiv = contentEl.createDiv();
     settings.savedQueries.forEach((q) => {
       const qDiv = qsDiv.createDiv({ text: q.name, cls: "savedQ-view-q" });
-      qDiv.ariaLabel = `/${q.query}/${q.flags}`;
+      qDiv.ariaLabel = displayRegex(q);
 
       qDiv.addEventListener("click", () => {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
