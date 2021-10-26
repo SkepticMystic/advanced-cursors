@@ -45,7 +45,7 @@ export default class SavedQView extends ItemView {
       const qDiv = qsDiv.createDiv({ text: q.name, cls: "savedQ-view-q" });
       qDiv.ariaLabel = displayRegex(q);
 
-      qDiv.addEventListener("click", () => {
+      qDiv.addEventListener("contextmenu", () => {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (view) {
           const { editor } = view;
@@ -55,7 +55,7 @@ export default class SavedQView extends ItemView {
         }
       });
 
-      qDiv.addEventListener("contextmenu", () => {
+      qDiv.addEventListener("click", () => {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (view) {
           const { editor } = view;
