@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.36](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.35...0.0.36) (2021-10-26)
+
+
+### Features
+
+* :sparkles: Remember last searcher query in CursorModal ([ba86b19](https://github.com/SkepticMystic/advanced-cursors/commit/ba86b1977cc86fdc15a98212afb0a1e8af57ddcf))
+
 ### [0.0.35](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.33...0.0.35) (2021-10-26)
 
 
