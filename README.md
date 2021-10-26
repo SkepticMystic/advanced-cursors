@@ -147,14 +147,14 @@ Select the shortest string between a word boundary `\b` and a fullstop `\.`
 #### Capture all Highlights
 
 ```re
-/(?<=\=\=).\*(?=\=\=)/
+/==.*?==/
 
 ```
 
 #### Capture a Specific HTML Tag
 
 ```re
-/(?<=id=\"green"\>).*(?=\<)/
+/(?<=id="green">).*?(?=\<)/
 ```
 
 ### Navigation Queries
