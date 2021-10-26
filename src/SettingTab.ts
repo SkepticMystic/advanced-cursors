@@ -1,4 +1,11 @@
-import { App, Modal, Notice, PluginSettingTab } from "obsidian";
+import {
+  App,
+  MarkdownRenderer,
+  Modal,
+  Notice,
+  PluginSettingTab,
+  request,
+} from "obsidian";
 import type { Query } from "src/interfaces";
 import type ACPlugin from "src/main";
 import { cmdNextId, cmdRunId } from "src/utils";
@@ -89,7 +96,7 @@ export class ACSettingTab extends PluginSettingTab {
     }
   };
 
-  display(): void {
+  async display(): Promise<void> {
     let { containerEl } = this;
     const { settings } = this.plugin;
     containerEl.empty();
@@ -111,6 +118,13 @@ export class ACSettingTab extends PluginSettingTab {
     });
     this.savedQsDiv = containerEl.createDiv({ cls: "savedQs" });
     this.initExistingSavedQs(this.savedQsDiv);
+
+    const changelog = await request({
+      url: "https://raw.githubusercontent.com/SkepticMystic/advanced-cursors/master/CHANGELOG.md",
+    });
+
+    const logDiv = containerEl.createDiv();
+    MarkdownRenderer.renderMarkdown(changelog, logDiv, "", this.plugin);
   }
 }
 
