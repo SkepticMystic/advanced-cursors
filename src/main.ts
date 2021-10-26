@@ -73,6 +73,13 @@ export default class ACPlugin extends Plugin {
         this.selectNextInstance(editor);
       },
     });
+    this.addCommand({
+      id: "move-to-previous-match",
+      name: "Move to previous instance of current selection",
+      editorCallback: (editor: Editor) => {
+        this.selectPreviousInstance(editor);
+      },
+    });
 
     this.addCommand({
       id: "add-next-match-to-selections",
@@ -157,16 +164,17 @@ export default class ACPlugin extends Plugin {
     }
   }
 
-  getToSelect(editor: Editor) {
-    const { anchor, head } = editor.listSelections().last();
-    const offsetA = editor.posToOffset(anchor);
-    const offsetH = editor.posToOffset(head);
-
+  getToSelect(editor: Editor): {
+    toSelect: string;
+    wordA: EditorPosition | undefined;
+    wordH: EditorPosition | undefined;
+  } {
     let toSelect, wordH: EditorPosition, wordA: EditorPosition;
 
+    const { anchor, head } = editor.listSelections().last();
     if (!(anchor.line === head.line && anchor.ch === head.ch)) {
       toSelect = editor.getRange(anchor, head);
-      return { toSelect, offsetH, offsetA };
+      return { toSelect, wordA, wordH };
     }
 
     try {
@@ -187,46 +195,84 @@ export default class ACPlugin extends Plugin {
       } else {
         throw new Error("Cannot determine if cm5 or cm6");
       }
-      return { toSelect, offsetH, offsetA, wordA, wordH };
+      return { toSelect, wordA, wordH };
     } catch (error) {
       console.log(error);
     }
   }
 
-  selectNextInstance(editor: Editor, appendQ = false, q?: Query) {
-    // TODO const q = {...existingQ || newQ}
-    let { toSelect, offsetH, wordA, wordH } = this.getToSelect(editor);
+  selectNextInstance(editor: Editor, appendQ = false, existingQ?: Query) {
+    let { toSelect, wordA, wordH } = this.getToSelect(editor);
 
     // Set words under cursor
-    if (!editor.somethingSelected() && !q) {
+    if (!editor.somethingSelected() && !existingQ) {
       editor.setSelection(wordA, wordH);
       return;
     }
 
-    const content = editor.getValue();
-
-    let nextFromOffset;
-    if (q) {
-      // ExistingQ and !somethingSelected
-      const fromOffset = editor.posToOffset(editor.getCursor());
-
-      const regex = createRegex(q);
-      const matches = [...content.matchAll(regex)];
-
-      const match = matches.find((m) => m.index >= fromOffset) ?? matches[0];
-      nextFromOffset = match?.index;
-      toSelect = match?.[0] ?? toSelect;
-    } else {
-      // No Q and nothing selected
-      nextFromOffset = content.indexOf(toSelect, offsetH);
-      if (nextFromOffset === -1) {
-        nextFromOffset = content.indexOf(toSelect);
-      }
+    let q = existingQ;
+    if (!existingQ) {
+      q = { name: "", query: toSelect, flags: "", regexQ: false };
     }
+
+    const content = editor.getValue();
+    let nextFromOffset;
+    const fromOffset = editor.posToOffset(editor.getCursor());
+
+    const regex = createRegex(q);
+    const matches = [...content.matchAll(regex)];
+
+    const match = matches.find((m) => m.index >= fromOffset) ?? matches[0];
+    nextFromOffset = match?.index;
+    toSelect = match?.[0] ?? toSelect;
+
     if (nextFromOffset > -1) {
       const editorSelection = this.createSelection(
         editor,
         nextFromOffset,
+        toSelect
+      );
+      this.setSelections(appendQ, editor, editorSelection);
+      editor.scrollIntoView({
+        from: editorSelection.anchor,
+        to: editorSelection.head,
+      });
+    } else {
+      new Notice(`No instance of ${toSelect} found anywhere in note.`);
+    }
+  }
+
+  selectPreviousInstance(editor: Editor, appendQ = false, existingQ?: Query) {
+    let { toSelect, wordA, wordH } = this.getToSelect(editor);
+
+    // Set words under cursor
+    if (!editor.somethingSelected() && !existingQ) {
+      editor.setSelection(wordA, wordH);
+      return;
+    }
+
+    let q = existingQ;
+    if (!existingQ) {
+      q = { name: "", query: toSelect, flags: "", regexQ: false };
+    }
+
+    const content = editor.getValue();
+    let prevFromOffset;
+    const fromOffset = editor.posToOffset(editor.getCursor("from"));
+
+    const regex = createRegex(q);
+    const matches = [...content.matchAll(regex)];
+
+    const match =
+      matches.filter((m) => m.index < fromOffset).last() ?? matches.last();
+    console.log({ matches, match, fromOffset });
+    prevFromOffset = match?.index;
+    toSelect = match?.[0] ?? toSelect;
+
+    if (prevFromOffset > -1) {
+      const editorSelection = this.createSelection(
+        editor,
+        prevFromOffset,
         toSelect
       );
       this.setSelections(appendQ, editor, editorSelection);
