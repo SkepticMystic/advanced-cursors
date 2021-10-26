@@ -24,7 +24,10 @@
     await plugin.saveSettings();
   }
 
-  onMount(() => queryEl.focus());
+  onMount(() => {
+    queryEl.focus();
+    queryEl.select();
+  });
 </script>
 
 <div class="inputEls">
