@@ -79,6 +79,8 @@ export class ACSettingTab extends PluginSettingTab {
 
       this.app.commands.removeCommand(cmdRunId(removedQ));
       this.app.commands.removeCommand(cmdNextId(removedQ));
+
+      this.plugin.view.draw();
     } catch (error) {
       console.log(error);
       new Notice(
