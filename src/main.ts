@@ -223,7 +223,7 @@ export default class ACPlugin extends Plugin {
     const content = editor.getValue();
     let nextFromOffset;
     const fromOffset = editor.posToOffset(
-      editor.getCursor(mode === "next" ? "to" : "from")
+      editor.listSelections().last()[mode === "next" ? "head" : "anchor"]
     );
 
     const regex = createRegex(q);
