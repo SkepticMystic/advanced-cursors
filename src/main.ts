@@ -36,6 +36,10 @@ declare module "obsidian" {
       };
     };
   }
+
+  interface WorkspaceItem {
+    side: "left" | "right";
+  }
 }
 
 export default class ACPlugin extends Plugin {
@@ -269,7 +273,13 @@ export default class ACPlugin extends Plugin {
       await leaf.setViewState({ type: "empty" });
       break;
     }
-    (leaf ?? this.app.workspace.getRightLeaf(false)).setViewState({
+
+    (
+      leaf ??
+      (this.settings.savedQViewState.side === "right"
+        ? this.app.workspace.getRightLeaf(false)
+        : this.app.workspace.getLeftLeaf(false))
+    ).setViewState({
       type,
       active: true,
     });
@@ -280,7 +290,15 @@ export default class ACPlugin extends Plugin {
   //   }
   // }
 
+  async saveViewState() {
+    const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_AC)[0];
+    const { side } = leaf.getRoot();
+    this.settings.savedQViewState = { side };
+    await this.saveSettings();
+  }
+
   onunload() {
+    this.saveViewState();
     this.app.workspace.detachLeavesOfType(VIEW_TYPE_AC);
   }
 

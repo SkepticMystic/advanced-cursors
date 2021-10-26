@@ -7,4 +7,5 @@ export interface Query {
 
 export interface ACSettings {
   savedQueries: Query[];
+  savedQViewState: { side: "left" | "right" };
 }
