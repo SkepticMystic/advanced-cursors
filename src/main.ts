@@ -331,8 +331,8 @@ export default class ACPlugin extends Plugin {
     await this.saveSettings();
   }
 
-  onunload() {
-    this.saveViewState();
+  async onunload() {
+    await this.saveViewState();
     this.app.workspace.detachLeavesOfType(VIEW_TYPE_AC);
   }
 
