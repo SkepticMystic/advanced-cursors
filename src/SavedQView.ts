@@ -59,7 +59,7 @@ export default class SavedQView extends ItemView {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         if (view) {
           const { editor } = view;
-          this.plugin.selectNextInstance(editor, false, q);
+          this.plugin.selectInstance(editor, false, "next", q);
           editor.focus();
         }
       });

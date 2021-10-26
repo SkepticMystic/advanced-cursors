@@ -45,6 +45,7 @@ declare module "obsidian" {
 export default class ACPlugin extends Plugin {
   settings: ACSettings;
   view: SavedQView;
+  lastQ: Query;
 
   async onload() {
     console.log("Loading advanced cursors");
@@ -70,14 +71,14 @@ export default class ACPlugin extends Plugin {
       id: "move-to-next-match",
       name: "Move to next instance of current selection",
       editorCallback: (editor: Editor) => {
-        this.selectNextInstance(editor);
+        this.selectInstance(editor, false, "next");
       },
     });
     this.addCommand({
       id: "move-to-previous-match",
       name: "Move to previous instance of current selection",
       editorCallback: (editor: Editor) => {
-        this.selectPreviousInstance(editor);
+        this.selectInstance(editor, false, "prev");
       },
     });
 
@@ -85,7 +86,7 @@ export default class ACPlugin extends Plugin {
       id: "add-next-match-to-selections",
       name: "Add next instance of current selection to selections",
       editorCallback: (editor: Editor) => {
-        this.selectNextInstance(editor, true);
+        this.selectInstance(editor, true, "next");
       },
     });
 
@@ -118,7 +119,7 @@ export default class ACPlugin extends Plugin {
       id: cmdNextId(q),
       name: cmdNextName(q),
       editorCallback: (editor: Editor) => {
-        this.selectNextInstance(editor, false, q);
+        this.selectInstance(editor, false, "next", q);
       },
     });
   }
@@ -201,7 +202,12 @@ export default class ACPlugin extends Plugin {
     }
   }
 
-  selectNextInstance(editor: Editor, appendQ = false, existingQ?: Query) {
+  selectInstance(
+    editor: Editor,
+    appendQ = false,
+    mode: "prev" | "next",
+    existingQ?: Query
+  ) {
     let { toSelect, wordA, wordH } = this.getToSelect(editor);
 
     // Set words under cursor
@@ -217,73 +223,78 @@ export default class ACPlugin extends Plugin {
 
     const content = editor.getValue();
     let nextFromOffset;
-    const fromOffset = editor.posToOffset(editor.getCursor());
+    const fromOffset = editor.posToOffset(
+      editor.getCursor(mode === "next" ? "to" : "from")
+    );
 
     const regex = createRegex(q);
     const matches = [...content.matchAll(regex)];
 
-    const match = matches.find((m) => m.index >= fromOffset) ?? matches[0];
+    let match;
+    if (mode === "next") {
+      match = matches.find((m) => m.index >= fromOffset) ?? matches[0];
+    } else {
+      match =
+        matches.filter((m) => m.index < fromOffset).last() ?? matches.last();
+    }
     nextFromOffset = match?.index;
+    console.log({ matches, match, nextFromOffset });
     toSelect = match?.[0] ?? toSelect;
 
-    if (nextFromOffset > -1) {
-      const editorSelection = this.createSelection(
-        editor,
-        nextFromOffset,
-        toSelect
-      );
-      this.setSelections(appendQ, editor, editorSelection);
+    if (nextFromOffset !== undefined) {
+      const editorSel = this.createSelection(editor, nextFromOffset, toSelect);
+      console.log({ editorSel });
+      this.setSelections(appendQ, editor, editorSel);
       editor.scrollIntoView({
-        from: editorSelection.anchor,
-        to: editorSelection.head,
+        from: editorSel.anchor,
+        to: editorSel.head,
       });
     } else {
-      new Notice(`No instance of ${toSelect} found anywhere in note.`);
+      new Notice(`No instance of '${toSelect}' found anywhere in note.`);
     }
   }
 
-  selectPreviousInstance(editor: Editor, appendQ = false, existingQ?: Query) {
-    let { toSelect, wordA, wordH } = this.getToSelect(editor);
+  // selectPreviousInstance(editor: Editor, appendQ = false, existingQ?: Query) {
+  //   let { toSelect, wordA, wordH } = this.getToSelect(editor);
 
-    // Set words under cursor
-    if (!editor.somethingSelected() && !existingQ) {
-      editor.setSelection(wordA, wordH);
-      return;
-    }
+  //   // Set words under cursor
+  //   if (!editor.somethingSelected() && !existingQ) {
+  //     editor.setSelection(wordA, wordH);
+  //     return;
+  //   }
 
-    let q = existingQ;
-    if (!existingQ) {
-      q = { name: "", query: toSelect, flags: "", regexQ: false };
-    }
+  //   let q = existingQ;
+  //   if (!existingQ) {
+  //     q = { name: "", query: toSelect, flags: "", regexQ: false };
+  //   }
 
-    const content = editor.getValue();
-    let prevFromOffset;
-    const fromOffset = editor.posToOffset(editor.getCursor("from"));
+  //   const content = editor.getValue();
+  //   let prevFromOffset;
+  //   const fromOffset = editor.posToOffset(editor.getCursor("from"));
 
-    const regex = createRegex(q);
-    const matches = [...content.matchAll(regex)];
+  //   const regex = createRegex(q);
+  //   const matches = [...content.matchAll(regex)];
 
-    const match =
-      matches.filter((m) => m.index < fromOffset).last() ?? matches.last();
-    console.log({ matches, match, fromOffset });
-    prevFromOffset = match?.index;
-    toSelect = match?.[0] ?? toSelect;
+  //   const match =
+  //     matches.filter((m) => m.index < fromOffset).last() ?? matches.last();
+  //   prevFromOffset = match?.index;
+  //   toSelect = match?.[0] ?? toSelect;
 
-    if (prevFromOffset > -1) {
-      const editorSelection = this.createSelection(
-        editor,
-        prevFromOffset,
-        toSelect
-      );
-      this.setSelections(appendQ, editor, editorSelection);
-      editor.scrollIntoView({
-        from: editorSelection.anchor,
-        to: editorSelection.head,
-      });
-    } else {
-      new Notice(`No instance of ${toSelect} found anywhere in note.`);
-    }
-  }
+  //   if (prevFromOffset) {
+  //     const editorSelection = this.createSelection(
+  //       editor,
+  //       prevFromOffset,
+  //       toSelect
+  //     );
+  //     this.setSelections(appendQ, editor, editorSelection);
+  //     editor.scrollIntoView({
+  //       from: editorSelection.anchor,
+  //       to: editorSelection.head,
+  //     });
+  //   } else {
+  //     new Notice(`No instance of ${toSelect} found anywhere in note.`);
+  //   }
+  // }
 
   initView = async <YourView extends ItemView>(
     type: string
