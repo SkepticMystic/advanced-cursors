@@ -41,7 +41,7 @@ export default class SavedQView extends ItemView {
 
     const qsDiv = contentEl.createDiv();
     settings.savedQueries.forEach((q) => {
-      const qDiv = qsDiv.createDiv({ text: q.name, cls: "savedQ-name" });
+      const qDiv = qsDiv.createDiv({ text: q.name, cls: "savedQ-view-q" });
       qDiv.ariaLabel = `/${q.query}/${q.flags}`;
 
       qDiv.addEventListener("click", () => {

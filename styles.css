@@ -11,14 +11,20 @@
 .savedQ-name {
   background-color: var(--background-secondary-alt);
   padding: 2px 4px;
-  border-radius: 3px;
+  border-radius: 5px;
+}
+
+.savedQ-view-q {
+  padding: 2px 4px;
+  border-radius: 5px;
 }
 
 .savedQ-name:hover,
 .editQButton:hover,
 .deleteQButton:hover,
 .savedQ-query:hover,
-.AC-submit-button:hover {
+.AC-submit-button:hover,
+.savedQ-view-q:hover {
   background-color: var(--interactive-accent) !important;
   cursor: pointer;
 }
@@ -30,5 +36,5 @@
 .savedQ-query {
   background-color: var(--background-primary-alt);
   padding: 2px 4px;
-  border-radius: 3px;
+  border-radius: 5px;
 }
