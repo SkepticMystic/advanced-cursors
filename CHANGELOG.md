@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.31](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.30...0.0.31) (2021-10-26)
+
+
+### Bug Fixes
+
+* :bug: Remove savedQ from view when deleted from settings ([2057a7b](https://github.com/SkepticMystic/advanced-cursors/commit/2057a7b0d1861d37e1ee9a76fe2b7d342ee94927))
+* :bug: Updated Readme examples ([03253c5](https://github.com/SkepticMystic/advanced-cursors/commit/03253c50b8d3d1bff58704458fac3e5fc20e76a1))
+
 ### [0.0.30](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.29...0.0.30) (2021-10-25)
 
 
