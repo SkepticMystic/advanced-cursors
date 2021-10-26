@@ -13,6 +13,8 @@ import SavedQView from "src/SavedQView";
 import {
   cmdNextId,
   cmdNextName,
+  cmdPrevId,
+  cmdPrevName,
   cmdRunId,
   cmdRunName,
   createRegex,
@@ -59,11 +61,10 @@ export default class ACPlugin extends Plugin {
       },
     });
 
-    this.settings.savedQueries.forEach((savedQ) => {
-      this.addRunCmd(savedQ);
-    });
-    this.settings.savedQueries.forEach((savedQ) => {
-      this.addNextCmd(savedQ);
+    this.settings.savedQueries.forEach((q) => {
+      this.addRunCmd(q);
+      this.addNextCmd(q);
+      this.addPrevCmd(q);
     });
 
     this.addCommand({
@@ -119,6 +120,16 @@ export default class ACPlugin extends Plugin {
       name: cmdNextName(q),
       editorCallback: (editor: Editor) => {
         this.selectInstance(editor, false, "next", q);
+      },
+    });
+  }
+
+  addPrevCmd(q: Query) {
+    this.addCommand({
+      id: cmdPrevId(q),
+      name: cmdPrevName(q),
+      editorCallback: (editor: Editor) => {
+        this.selectInstance(editor, false, "prev", q);
       },
     });
   }
@@ -253,48 +264,6 @@ export default class ACPlugin extends Plugin {
     }
   }
 
-  // selectPreviousInstance(editor: Editor, appendQ = false, existingQ?: Query) {
-  //   let { toSelect, wordA, wordH } = this.getToSelect(editor);
-
-  //   // Set words under cursor
-  //   if (!editor.somethingSelected() && !existingQ) {
-  //     editor.setSelection(wordA, wordH);
-  //     return;
-  //   }
-
-  //   let q = existingQ;
-  //   if (!existingQ) {
-  //     q = { name: "", query: toSelect, flags: "", regexQ: false };
-  //   }
-
-  //   const content = editor.getValue();
-  //   let prevFromOffset;
-  //   const fromOffset = editor.posToOffset(editor.getCursor("from"));
-
-  //   const regex = createRegex(q);
-  //   const matches = [...content.matchAll(regex)];
-
-  //   const match =
-  //     matches.filter((m) => m.index < fromOffset).last() ?? matches.last();
-  //   prevFromOffset = match?.index;
-  //   toSelect = match?.[0] ?? toSelect;
-
-  //   if (prevFromOffset) {
-  //     const editorSelection = this.createSelection(
-  //       editor,
-  //       prevFromOffset,
-  //       toSelect
-  //     );
-  //     this.setSelections(appendQ, editor, editorSelection);
-  //     editor.scrollIntoView({
-  //       from: editorSelection.anchor,
-  //       to: editorSelection.head,
-  //     });
-  //   } else {
-  //     new Notice(`No instance of ${toSelect} found anywhere in note.`);
-  //   }
-  // }
-
   initView = async <YourView extends ItemView>(
     type: string
     // viewClass: Constructor<YourView>
@@ -326,9 +295,11 @@ export default class ACPlugin extends Plugin {
 
   async saveViewState() {
     const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_AC)[0];
-    const { side } = leaf.getRoot();
+    const item = leaf.getRoot();
+    const { side } = item;
     this.settings.savedQViewState = { side };
     await this.saveSettings();
+    console.log({ item, side, savedSide: this.settings.savedQViewState.side });
   }
 
   async onunload() {

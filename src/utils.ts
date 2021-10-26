@@ -6,6 +6,9 @@ export const cmdRunName = (q: Query) => `All: ${q.name} → ${q.query}`;
 export const cmdNextId = (q: Query) => `AC-Next: ${q.name} -> ${q.query}`;
 export const cmdNextName = (q: Query) => `Next: ${q.name} → ${q.query}`;
 
+export const cmdPrevId = (q: Query) => `AC-Prev: ${q.name} -> ${q.query}`;
+export const cmdPrevName = (q: Query) => `Prev: ${q.name} → ${q.query}`;
+
 export const createRegex = (q: Query) => {
   if (q.regexQ) {
     let useFlags = q.flags.slice();
