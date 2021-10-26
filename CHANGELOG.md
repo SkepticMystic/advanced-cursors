@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.37](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.36...0.0.37) (2021-10-26)
+
+
+### Bug Fixes
+
+* :bug: Get last selection, not getCursor() ([769587f](https://github.com/SkepticMystic/advanced-cursors/commit/769587fabf2f6687a660fe95458272cb894e405a))
+* :bug: Select lastQ when opening cursorModal ([35bacca](https://github.com/SkepticMystic/advanced-cursors/commit/35bacca4b9e9ac172a9efc84dfb9ab8abd028a1a))
+
 ### [0.0.36](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.35...0.0.36) (2021-10-26)
 
 
