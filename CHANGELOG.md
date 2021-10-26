@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.38](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.37...0.0.38) (2021-10-26)
+
+
+### Bug Fixes
+
+* :bug: await saveViewState! ([3e2eab0](https://github.com/SkepticMystic/advanced-cursors/commit/3e2eab0031b21a2f9baac0cd78b06d73f00e3ac8))
+
 ### [0.0.37](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.36...0.0.37) (2021-10-26)
 
 
