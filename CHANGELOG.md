@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.33](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.32...0.0.33) (2021-10-26)
+
+
+### Bug Fixes
+
+* :bug: Fix [#13](https://github.com/SkepticMystic/advanced-cursors/issues/13): Significant refactor with multiple bug fixes ([636ce52](https://github.com/SkepticMystic/advanced-cursors/commit/636ce521d36bcc6cefe207feec951e2c913108f7))
+
 ### [0.0.32](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.31...0.0.32) (2021-10-26)
 
 
