@@ -3,7 +3,7 @@
   import type { Query } from "src/interfaces";
   import type ACPlugin from "src/main";
   import type { ACSettingTab, AddQModal } from "src/SettingTab";
-  import { cmdNextId, cmdRunId } from "src/utils";
+  import { cmdNextId, cmdPrevId, cmdRunId } from "src/utils";
   import { onMount } from "svelte";
 
   export let app: App;
@@ -32,6 +32,7 @@
 
     if (i === -1 && savedQueries.findIndex((q) => q.name === name) > -1) {
       new Notice(`A query with named "${name}" already exists`);
+      return;
     } else {
       const oldQ = savedQueries[i];
 
@@ -49,6 +50,7 @@
         // Remove old command
         app.commands.removeCommand(cmdRunId(oldQ));
         app.commands.removeCommand(cmdNextId(oldQ));
+        app.commands.removeCommand(cmdPrevId(oldQ));
 
         // Overwrite old Q
         plugin.settings.savedQueries[i] = newQ;
@@ -65,6 +67,7 @@
       //   Add new plugin command
       plugin.addRunCmd(newQ);
       plugin.addNextCmd(newQ);
+      plugin.addPrevCmd(newQ);
 
       plugin.view.draw();
       modal.close();

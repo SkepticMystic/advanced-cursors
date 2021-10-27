@@ -1,13 +1,13 @@
 import type { Query } from "src/interfaces";
 
 export const cmdRunId = (q: Query) => `AC-All: ${q.name} -> ${q.query}`;
-export const cmdRunName = (q: Query) => `All: ${q.name} → ${q.query}`;
+export const cmdRunName = (q: Query) => `All: ${q.name} → ${displayRegex(q)}`;
 
 export const cmdNextId = (q: Query) => `AC-Next: ${q.name} -> ${q.query}`;
-export const cmdNextName = (q: Query) => `Next: ${q.name} → ${q.query}`;
+export const cmdNextName = (q: Query) => `Next: ${q.name} → ${displayRegex(q)}`;
 
 export const cmdPrevId = (q: Query) => `AC-Prev: ${q.name} -> ${q.query}`;
-export const cmdPrevName = (q: Query) => `Prev: ${q.name} → ${q.query}`;
+export const cmdPrevName = (q: Query) => `Prev: ${q.name} → ${displayRegex(q)}`;
 
 export const createRegex = (q: Query) => {
   if (q.regexQ) {
@@ -22,6 +22,8 @@ export const createRegex = (q: Query) => {
 };
 
 export const displayRegex = (q: Query) => {
-  const { source } = createRegex(q);
-  return `/${source}/${q.flags}`;
+  const regex = createRegex(q);
+  let { source, flags } = regex;
+  flags = flags.replace("g", "");
+  return `/${source}/${flags}`;
 };
