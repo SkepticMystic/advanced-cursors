@@ -8,7 +8,7 @@ This plugin pairs really well with `@spslater`'s [Cursor Position plugin](https:
 
 ### Move to next instance of current selection
 
-This command takes the text you currently have selected, and moves the cursor to the next instance of that same text.
+This command takes the text you currently have selected (or selects the word under the cursor if nothing is selected), and moves the cursor to the next instance of that same text.
 
 ![](Assets/cursors-readme1.gif)
 
@@ -16,12 +16,20 @@ If no next instance is found, it will loop back to the beginning of the note.
 
 ### Add next instance of current selection to selections
 
-This command does mostly the same as the previous, except it keeps your previous cursors in place.
+This command does mostly the same as the previous, except it keeps your previous cursor selections in place.
 Similarly, if no next instance is found, it will loop back to the beginning of the note.
 
 This does the same thing as `Ctrl + d` in VS Code.
 
 ![](Assets/cursors-readme2.gif)
+
+### Move to previous instance of current selection
+
+Same as [Move to next instance of current selection](https://github.com/SkepticMystic/advanced-cursors/blob/master/README.md#Move-to-next-instance-of-current-selection), except going backwards.
+
+### Add previous instance of current selection to selections
+
+Same as [Add next instance of current selection to selections](https://github.com/SkepticMystic/advanced-cursors/blob/master/README.md#Add-next-instance-of-current-selection-to-selections), except going backwards.
 
 ### Open Regex match modal
 
