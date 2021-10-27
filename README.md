@@ -117,7 +117,7 @@ If you prefer bullet points to not have an extra line between them, use this to 
 #### Select Sentences
 
 ```re
-/\b.*?\.(?=\s|$)/gs
+/\b.*?\.(?=\s|$)/m
 ```
 
 Select the shortest string between a word boundary `\b` and a fullstop `\.`
