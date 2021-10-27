@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.40](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.39...0.0.40) (2021-10-27)
+
+
+### Bug Fixes
+
+* :bug: Add/remove `Prev` cmd when editing/adding new savedQ ([6dbdf8b](https://github.com/SkepticMystic/advanced-cursors/commit/6dbdf8b193e48bacf5028c52f236b3a6a6802270))
+
 ### [0.0.39](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.38...0.0.39) (2021-10-26)
 
 
