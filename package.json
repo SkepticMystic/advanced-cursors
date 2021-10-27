@@ -1,6 +1,6 @@
 {
     "name": "advanced-cursors",
-    "version": "0.0.40",
+    "version": "0.0.41",
     "description": "Use multiple cursors even more powerfully",
     "main": "main.js",
     "scripts": {
@@ -9,7 +9,23 @@
         "release": "standard-version"
     },
     "standard-version": {
-        "t": ""
+        "t": "",
+        "options": {},
+        "types": [
+            {
+                "type": "feat",
+                "section": "Features"
+            },
+            {
+                "type": "fix",
+                "section": "Bug Fixes"
+            },
+            {
+                "type": "docs",
+                "section": "Documentation"
+            }
+        ],
+        "header": "Advanced Cursors Changelog"
     },
     "keywords": [],
     "author": "SkepticMystic",
