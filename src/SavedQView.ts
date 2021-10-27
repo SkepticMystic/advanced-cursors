@@ -1,4 +1,5 @@
 import { ItemView, MarkdownView, WorkspaceLeaf } from "obsidian";
+import { addFeatherIcon } from "obsidian-community-lib";
 import { VIEW_TYPE_AC } from "src/const";
 import { CursorsModal } from "src/CursorsModal";
 import type ACPlugin from "src/main";
@@ -24,7 +25,7 @@ export default class SavedQView extends ItemView {
     return "Saved Queries";
   }
 
-  icon = "feather-mouse-pointer";
+  icon = addFeatherIcon("mouse-pointer") as string;
 
   async onOpen(): Promise<void> {
     await this.draw();

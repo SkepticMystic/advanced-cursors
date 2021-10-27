@@ -106,8 +106,6 @@ export default class ACPlugin extends Plugin {
       },
     });
 
-    addFeatherIcon("mouse-pointer");
-
     this.app.workspace.onLayoutReady(async () => {
       this.registerView(
         VIEW_TYPE_AC,

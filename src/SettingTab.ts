@@ -1,11 +1,5 @@
-import {
-  App,
-  MarkdownRenderer,
-  Modal,
-  Notice,
-  PluginSettingTab,
-  request,
-} from "obsidian";
+import { App, Modal, Notice, PluginSettingTab } from "obsidian";
+import { addChangelogButton } from "obsidian-community-lib";
 import type { Query } from "src/interfaces";
 import type ACPlugin from "src/main";
 import { cmdNextId, cmdRunId } from "src/utils";
@@ -123,10 +117,11 @@ export class ACSettingTab extends PluginSettingTab {
     // SECTION Changelog
 
     containerEl.createEl("hr");
-    containerEl.createEl("button", { text: "Changelog" }, (but) =>
-      but.onClickEvent(() => {
-        new ChangelogModal(this.app, this.plugin).open();
-      })
+    addChangelogButton(
+      this.app,
+      this.plugin,
+      containerEl,
+      "https://raw.githubusercontent.com/SkepticMystic/advanced-cursors/master/CHANGELOG.md"
     );
   }
 }
@@ -173,28 +168,5 @@ export class AddQModal extends Modal {
   onClose() {
     let { contentEl } = this;
     contentEl.empty();
-  }
-}
-
-export class ChangelogModal extends Modal {
-  plugin: ACPlugin;
-
-  constructor(app: App, plugin: ACPlugin) {
-    super(app);
-    this.plugin = plugin;
-  }
-
-  async onOpen() {
-    let { contentEl } = this;
-    const changelog = await request({
-      url: "https://raw.githubusercontent.com/SkepticMystic/advanced-cursors/master/CHANGELOG.md",
-    });
-
-    const logDiv = contentEl.createDiv();
-    MarkdownRenderer.renderMarkdown(changelog, logDiv, "", this.plugin);
-  }
-
-  onClose() {
-    this.contentEl.empty();
   }
 }
