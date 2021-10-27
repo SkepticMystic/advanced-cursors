@@ -1,4 +1,11 @@
 Advanced Cursors Changelog
+### [0.0.42](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.40...0.0.42) (2021-10-27)
+
+
+### Documentation
+
+* :memo: Update Readme ([c9e285b](https://github.com/SkepticMystic/advanced-cursors/commit/c9e285b1aead5ae5dd997a0c614ed4b00aced325))
+
 ### [0.0.41](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.40...0.0.41) (2021-10-27)
 
 ### [0.0.40](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.39...0.0.40) (2021-10-27)
