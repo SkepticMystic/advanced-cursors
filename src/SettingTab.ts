@@ -102,6 +102,7 @@ export class ACSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     containerEl.createEl("h2", { text: "Advanced Cursors Settings" });
+    // SECTION SavedQs
     containerEl.createEl("h3", { text: "Saved Queries" });
 
     containerEl.createEl("button", { text: "Add Query" }, (but) => {
@@ -119,12 +120,14 @@ export class ACSettingTab extends PluginSettingTab {
     this.savedQsDiv = containerEl.createDiv({ cls: "savedQs" });
     this.initExistingSavedQs(this.savedQsDiv);
 
-    const changelog = await request({
-      url: "https://raw.githubusercontent.com/SkepticMystic/advanced-cursors/master/CHANGELOG.md",
-    });
+    // SECTION Changelog
 
-    const logDiv = containerEl.createDiv();
-    MarkdownRenderer.renderMarkdown(changelog, logDiv, "", this.plugin);
+    containerEl.createEl("hr");
+    containerEl.createEl("button", { text: "Changelog" }, (but) =>
+      but.onClickEvent(() => {
+        new ChangelogModal(this.app, this.plugin).open();
+      })
+    );
   }
 }
 
@@ -170,5 +173,28 @@ export class AddQModal extends Modal {
   onClose() {
     let { contentEl } = this;
     contentEl.empty();
+  }
+}
+
+export class ChangelogModal extends Modal {
+  plugin: ACPlugin;
+
+  constructor(app: App, plugin: ACPlugin) {
+    super(app);
+    this.plugin = plugin;
+  }
+
+  async onOpen() {
+    let { contentEl } = this;
+    const changelog = await request({
+      url: "https://raw.githubusercontent.com/SkepticMystic/advanced-cursors/master/CHANGELOG.md",
+    });
+
+    const logDiv = contentEl.createDiv();
+    MarkdownRenderer.renderMarkdown(changelog, logDiv, "", this.plugin);
+  }
+
+  onClose() {
+    this.contentEl.empty();
   }
 }
