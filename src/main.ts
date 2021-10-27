@@ -90,6 +90,22 @@ export default class ACPlugin extends Plugin {
       },
     });
 
+    this.addCommand({
+      id: "copy-line-up",
+      name: "Copy Current Line Upwards",
+      editorCallback: (editor: Editor) => {
+        this.copyLineUorD(editor, "up");
+      },
+    });
+
+    this.addCommand({
+      id: "copy-line-down",
+      name: "Copy Current Line Downwards",
+      editorCallback: (editor: Editor) => {
+        this.copyLineUorD(editor, "down");
+      },
+    });
+
     addFeatherIcon("mouse-pointer");
 
     this.app.workspace.onLayoutReady(async () => {
@@ -132,6 +148,37 @@ export default class ACPlugin extends Plugin {
         this.selectInstance(editor, false, "prev", q);
       },
     });
+  }
+
+  linesOfSelection(editor: Editor) {
+    const [from, to] = [editor.getCursor("from"), editor.getCursor("to")];
+    const [fromLine, toLine] = [from.line, to.line];
+
+    const lines: string[] = [];
+    for (let i = fromLine; i <= toLine; i++) {
+      lines.push(editor.getLine(i));
+    }
+    return lines;
+  }
+
+  copyLineUorD(editor: Editor, mode: "up" | "down") {
+    let [cursorFrom, cursorTo] = [
+      editor.getCursor("from"),
+      editor.getCursor("to"),
+    ];
+    const { line } = cursorTo;
+
+    const copyLines = this.linesOfSelection(editor);
+    const lines = editor.getValue().split("\n");
+    lines.splice(line + (mode === "up" ? 0 : 1), 0, ...copyLines);
+    editor.setValue(lines.join("\n"));
+
+    if (mode === "down") {
+      cursorFrom.line += copyLines.length;
+      cursorTo.line += copyLines.length;
+    }
+    editor.setSelection(cursorFrom, cursorTo);
+    editor.scrollIntoView({ from: cursorFrom, to: cursorTo });
   }
 
   createSelection(
