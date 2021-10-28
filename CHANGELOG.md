@@ -1,4 +1,6 @@
 ## Advanced Cursors Changelog
+### [0.1.1](https://github.com/SkepticMystic/advanced-cursors/compare/0.1.0...0.1.1) (2021-10-28)
+
 ## [0.1.0](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.43...0.1.0) (2021-10-27)
 
 ### [0.0.43](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.42...0.0.43) (2021-10-27)
