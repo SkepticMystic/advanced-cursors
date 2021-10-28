@@ -1,13 +1,13 @@
 import {
   Editor,
   EditorPosition,
+  EditorSelection,
   EditorSelectionOrCaret,
   ItemView,
   Notice,
   Plugin,
   WorkspaceLeaf,
 } from "obsidian";
-import { addFeatherIcon } from "obsidian-community-lib";
 import type { ACSettings as ACSettings, Query } from "src/interfaces";
 import SavedQView from "src/SavedQView";
 import {
@@ -148,7 +148,7 @@ export default class ACPlugin extends Plugin {
     });
   }
 
-  linesOfSelection(editor: Editor) {
+  linesOfSel(editor: Editor) {
     const [from, to] = [editor.getCursor("from"), editor.getCursor("to")];
     const [fromLine, toLine] = [from.line, to.line];
 
@@ -166,7 +166,7 @@ export default class ACPlugin extends Plugin {
     ];
     const { line } = cursorTo;
 
-    const copyLines = this.linesOfSelection(editor);
+    const copyLines = this.linesOfSel(editor);
     const lines = editor.getValue().split("\n");
     lines.splice(line + (mode === "up" ? 0 : 1), 0, ...copyLines);
     editor.setValue(lines.join("\n"));
@@ -179,11 +179,11 @@ export default class ACPlugin extends Plugin {
     editor.scrollIntoView({ from: cursorFrom, to: cursorTo });
   }
 
-  createSelection(
+  createSel(
     editor: Editor,
     nextFromOffset: number,
     toSelect: string
-  ): EditorSelectionOrCaret {
+  ): EditorSelection {
     const { line: lineA, ch: chA } = editor.offsetToPos(nextFromOffset);
     const { line: lineH, ch: chH } = editor.offsetToPos(
       nextFromOffset + toSelect.length
@@ -193,7 +193,7 @@ export default class ACPlugin extends Plugin {
     return { anchor, head };
   }
 
-  reconstructSelections(selections: EditorSelectionOrCaret[]) {
+  reconstructSels(selections: EditorSelectionOrCaret[]) {
     const newSelections: EditorSelectionOrCaret[] = [];
     selections.forEach((selection) => {
       newSelections.push({
@@ -204,7 +204,7 @@ export default class ACPlugin extends Plugin {
     return newSelections;
   }
 
-  setSelections(
+  setSels(
     appendQ: boolean,
     editor: Editor,
     editorSelection: EditorSelectionOrCaret
@@ -212,7 +212,7 @@ export default class ACPlugin extends Plugin {
     if (appendQ) {
       const currSelections: EditorSelectionOrCaret[] = editor.listSelections();
 
-      const reconSelections = this.reconstructSelections(currSelections);
+      const reconSelections = this.reconstructSels(currSelections);
       reconSelections.push(editorSelection);
       editor.setSelections(reconSelections);
     } else {
@@ -235,7 +235,6 @@ export default class ACPlugin extends Plugin {
       } else {
         toSelect = editor.getRange(anchor, head);
       }
-      console.log({ toSelect });
       return { toSelect, wordA, wordH };
     }
 
@@ -257,7 +256,6 @@ export default class ACPlugin extends Plugin {
       } else {
         throw new Error("Cannot determine if cm5 or cm6");
       }
-      console.log({ toSelect });
       if (editor.posToOffset(wordA) > editor.posToOffset(wordH)) {
         return { toSelect, wordA: wordH, wordH: wordA };
       }
@@ -267,6 +265,20 @@ export default class ACPlugin extends Plugin {
     }
   }
 
+  isSelected(editor: Editor, selection: EditorSelection) {
+    const offA = editor.posToOffset(selection.anchor);
+    const offH = editor.posToOffset(selection.head);
+    const matchingSels = editor
+      .listSelections()
+      .filter(
+        (sel) =>
+          editor.posToOffset(sel.anchor) === offA &&
+          editor.posToOffset(sel.head) === offH
+      );
+
+    return !!matchingSels.length;
+  }
+
   selectInstance(
     editor: Editor,
     appendQ = false,
@@ -274,7 +286,6 @@ export default class ACPlugin extends Plugin {
     existingQ?: Query
   ) {
     let { toSelect, wordA, wordH } = this.getToSelect(editor);
-    console.log({ wordA, wordH });
     // Set words under cursor
     if (!editor.somethingSelected() && !existingQ) {
       editor.setSelection(wordA, wordH);
@@ -307,12 +318,16 @@ export default class ACPlugin extends Plugin {
     toSelect = match?.[0] ?? toSelect;
 
     if (nextFromOffset !== undefined) {
-      const editorSel = this.createSelection(editor, nextFromOffset, toSelect);
-      console.log({ editorSel });
-      this.setSelections(appendQ, editor, editorSel);
+      const nextSel: EditorSelection = this.createSel(
+        editor,
+        nextFromOffset,
+        toSelect
+      );
+      console.log({ nextSel, isSelected: this.isSelected(editor, nextSel) });
+      this.setSels(appendQ, editor, nextSel);
       editor.scrollIntoView({
-        from: editorSel.anchor,
-        to: editorSel.head,
+        from: nextSel.anchor,
+        to: nextSel.head,
       });
     } else {
       new Notice(`No instance of '${toSelect}' found anywhere in note.`);
@@ -334,7 +349,7 @@ export default class ACPlugin extends Plugin {
 
     (
       leaf ??
-      (this.settings.savedQViewState.side === "right"
+      (this.settings.savedQViewState === "right"
         ? this.app.workspace.getRightLeaf(false)
         : this.app.workspace.getLeftLeaf(false))
     ).setViewState({
@@ -345,11 +360,10 @@ export default class ACPlugin extends Plugin {
 
   async saveViewState() {
     const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_AC)[0];
-    const item = leaf.getRoot();
-    const { side } = item;
-    this.settings.savedQViewState = { side };
+    const { side } = leaf.getRoot();
+    this.settings.savedQViewState = side;
     await this.saveSettings();
-    console.log({ item, side, savedSide: this.settings.savedQViewState.side });
+    console.log({ side });
   }
 
   async onunload() {
