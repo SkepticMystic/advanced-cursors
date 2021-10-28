@@ -228,8 +228,14 @@ export default class ACPlugin extends Plugin {
     let toSelect, wordH: EditorPosition, wordA: EditorPosition;
 
     const { anchor, head } = editor.listSelections().last();
+    // If last selection has something selected
     if (!(anchor.line === head.line && anchor.ch === head.ch)) {
-      toSelect = editor.getRange(anchor, head);
+      if (editor.posToOffset(anchor) > editor.posToOffset(head)) {
+        toSelect = editor.getRange(head, anchor);
+      } else {
+        toSelect = editor.getRange(anchor, head);
+      }
+      console.log({ toSelect });
       return { toSelect, wordA, wordH };
     }
 
@@ -251,6 +257,10 @@ export default class ACPlugin extends Plugin {
       } else {
         throw new Error("Cannot determine if cm5 or cm6");
       }
+      console.log({ toSelect });
+      if (editor.posToOffset(wordA) > editor.posToOffset(wordH)) {
+        return { toSelect, wordA: wordH, wordH: wordA };
+      }
       return { toSelect, wordA, wordH };
     } catch (error) {
       console.log(error);
@@ -264,7 +274,7 @@ export default class ACPlugin extends Plugin {
     existingQ?: Query
   ) {
     let { toSelect, wordA, wordH } = this.getToSelect(editor);
-
+    console.log({ wordA, wordH });
     // Set words under cursor
     if (!editor.somethingSelected() && !existingQ) {
       editor.setSelection(wordA, wordH);
@@ -287,7 +297,7 @@ export default class ACPlugin extends Plugin {
 
     let match;
     if (mode === "next") {
-      match = matches.find((m) => m.index >= fromOffset) ?? matches[0];
+      match = matches.find((m) => m.index > fromOffset) ?? matches[0];
     } else {
       match =
         matches.filter((m) => m.index < fromOffset).last() ?? matches.last();
@@ -332,11 +342,6 @@ export default class ACPlugin extends Plugin {
       active: true,
     });
   };
-
-  // instanceQ<I extends View>(ins: I, thing: any) {
-  //   if (thing instanceof ins) {
-  //   }
-  // }
 
   async saveViewState() {
     const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_AC)[0];
