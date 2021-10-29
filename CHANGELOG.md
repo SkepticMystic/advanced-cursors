@@ -1,4 +1,11 @@
 ## Advanced Cursors Changelog
+## [0.2.0](https://github.com/SkepticMystic/advanced-cursors/compare/0.1.3...0.2.0) (2021-10-29)
+
+
+### Features
+
+* :sparkles: Add previous instance of selection to selections ([8b1aac7](https://github.com/SkepticMystic/advanced-cursors/commit/8b1aac746d25445ae7b345ce47c4ef06c1e10c95))
+
 ### [0.1.3](https://github.com/SkepticMystic/advanced-cursors/compare/0.1.2...0.1.3) (2021-10-29)
 
 
