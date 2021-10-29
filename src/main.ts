@@ -283,6 +283,30 @@ export default class ACPlugin extends Plugin {
     return !!matchingSels.length;
   }
 
+  nextNotSelected(
+    editor: Editor,
+    matches: RegExpMatchArray[],
+    fromOffset: number,
+    mode: "next" | "prev"
+  ) {
+    const copyMatches = [...matches];
+
+    let i = copyMatches.findIndex((m) => m.index > fromOffset);
+    if (i === -1) {
+      i = 0;
+    }
+    while (copyMatches.length) {
+      const nextCandidate = copyMatches[i];
+      const sel = this.createSel(editor, nextCandidate.index, nextCandidate[0]);
+      if (!this.isSelected(editor, sel)) {
+        return nextCandidate;
+      } else {
+        copyMatches.slice(i, 1);
+        i++;
+      }
+    }
+  }
+
   selectInstance(
     editor: Editor,
     appendQ = false,
@@ -312,7 +336,7 @@ export default class ACPlugin extends Plugin {
 
     let match;
     if (mode === "next") {
-      match = matches.find((m) => m.index > fromOffset) ?? matches[0];
+      match = this.nextNotSelected(editor, matches, fromOffset, mode);
     } else {
       match =
         matches.filter((m) => m.index < fromOffset).last() ?? matches.last();
