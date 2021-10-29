@@ -90,6 +90,13 @@ export default class ACPlugin extends Plugin {
         this.selectInstance(editor, true, "next");
       },
     });
+    this.addCommand({
+      id: "add-prev-match-to-selections",
+      name: "Add previous instance of current selection to selections",
+      editorCallback: (editor: Editor) => {
+        this.selectInstance(editor, true, "prev");
+      },
+    });
 
     this.addCommand({
       id: "copy-line-up",
@@ -183,6 +190,18 @@ export default class ACPlugin extends Plugin {
     editor.scrollTo(left, top + window.innerHeight / 2);
   }
 
+  matchToSel(editor: Editor, match: RegExpMatchArray) {
+    const fromOff = match.index;
+    const toOff = fromOff + match[0].length;
+
+    const { line: lineA, ch: chA } = editor.offsetToPos(fromOff);
+    const { line: lineH, ch: chH } = editor.offsetToPos(toOff);
+
+    const anchor: EditorPosition = { ch: chA, line: lineA };
+    const head: EditorPosition = { ch: chH, line: lineH };
+    return { anchor, head };
+  }
+
   createSel(
     editor: Editor,
     nextFromOffset: number,
@@ -212,11 +231,12 @@ export default class ACPlugin extends Plugin {
     if (appendQ) {
       const currSelections: EditorSelectionOrCaret[] = editor.listSelections();
 
-      const reconSelections = this.reconstructSels(currSelections);
-      reconSelections.push(newSel);
+      const reconSelections = this.reconstructSels([...currSelections, newSel]);
+      // reconSelections.push(newSel);
       editor.setSelections(reconSelections);
     } else {
-      editor.setSelections([newSel]);
+      const reconSelections = this.reconstructSels([newSel]);
+      editor.setSelections(reconSelections);
     }
   }
 
@@ -287,14 +307,20 @@ export default class ACPlugin extends Plugin {
       return (
         matches.find((m) => m.index > fromOffset) ??
         matches.find((m) => {
-          const sel = this.createSel(editor, m.index, m[0]);
+          const sel = this.matchToSel(editor, m);
           return m.index < fromOffset && !this.isSelected(editor, sel);
         })
       );
     } else {
       // This mode is not set up to handle the bug from #18 when adding next instance to sels
       return (
-        matches.filter((m) => m.index < fromOffset).last() ?? matches.last()
+        matches.filter((m) => m.index < fromOffset).last() ??
+        matches
+          .filter((m) => {
+            const sel = this.matchToSel(editor, m);
+            return m.index > fromOffset && !this.isSelected(editor, sel);
+          })
+          .last()
       );
     }
   }
@@ -319,9 +345,12 @@ export default class ACPlugin extends Plugin {
 
     const content = editor.getValue();
     let nextFromOffset;
-    const fromOffset = editor.posToOffset(
-      editor.listSelections().last()[mode === "next" ? "head" : "anchor"]
-    );
+    let latestSel = editor.listSelections().last();
+    if (mode === "prev") {
+      latestSel = editor.listSelections().first();
+    }
+    const lastPos = latestSel[mode === "next" ? "head" : "anchor"];
+    const fromOffset = editor.posToOffset(lastPos);
 
     const regex = createRegex(q);
     const matches = [...content.matchAll(regex)];
@@ -331,11 +360,12 @@ export default class ACPlugin extends Plugin {
     toSelect = match?.[0] ?? toSelect;
 
     if (nextFromOffset !== undefined) {
-      const nextSel: EditorSelection = this.createSel(
-        editor,
-        nextFromOffset,
-        toSelect
-      );
+      const nextSel: EditorSelection = this.matchToSel(editor, match);
+      // this.createSel(
+      //   editor,
+      //   nextFromOffset,
+      //   toSelect
+      // );
       this.setSels(appendQ, editor, nextSel);
 
       editor.scrollIntoView({
