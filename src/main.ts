@@ -1,4 +1,5 @@
 import {
+  Constructor,
   Editor,
   EditorPosition,
   EditorSelection,
@@ -106,12 +107,12 @@ export default class ACPlugin extends Plugin {
       },
     });
 
+    this.registerView(
+      VIEW_TYPE_AC,
+      (leaf: WorkspaceLeaf) => (this.view = new SavedQView(leaf, this))
+    );
     this.app.workspace.onLayoutReady(async () => {
-      this.registerView(
-        VIEW_TYPE_AC,
-        (leaf: WorkspaceLeaf) => (this.view = new SavedQView(leaf, this))
-      );
-      await this.initView(VIEW_TYPE_AC);
+      await this.initView(VIEW_TYPE_AC, SavedQView);
     });
 
     this.addSettingTab(new ACSettingTab(this.app, this));
@@ -335,12 +336,12 @@ export default class ACPlugin extends Plugin {
   }
 
   initView = async <YourView extends ItemView>(
-    type: string
-    // viewClass: Constructor<YourView>
+    type: string,
+    viewClass: Constructor<YourView>
   ): Promise<void> => {
     let leaf: WorkspaceLeaf = null;
     for (leaf of this.app.workspace.getLeavesOfType(type)) {
-      if (leaf.view instanceof SavedQView) {
+      if (leaf.view instanceof viewClass) {
         return;
       }
       await leaf.setViewState({ type: "empty" });
