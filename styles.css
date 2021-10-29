@@ -3,11 +3,6 @@
   padding: 5px 5px;
 }
 
-.editQButton,
-.deleteQButton {
-  float: right;
-}
-
 .savedQ-name {
   background-color: var(--background-secondary-alt);
   padding: 2px 4px;
@@ -17,6 +12,11 @@
 .savedQ-view-q {
   padding: 2px 4px;
   border-radius: 5px;
+}
+
+.editQButton,
+.deleteQButton {
+  float: right;
 }
 
 .savedQ-name:hover,

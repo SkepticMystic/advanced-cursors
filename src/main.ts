@@ -177,7 +177,10 @@ export default class ACPlugin extends Plugin {
       cursorTo.line += copyLines.length;
     }
     editor.setSelection(cursorFrom, cursorTo);
-    editor.scrollIntoView({ from: cursorFrom, to: cursorTo });
+    let [from, to] = [editor.getCursor("from"), editor.getCursor("to")];
+    editor.scrollIntoView({ from, to });
+    const { top, left } = editor.getScrollInfo();
+    editor.scrollTo(left, top + window.innerHeight / 2);
   }
 
   createSel(
@@ -324,12 +327,14 @@ export default class ACPlugin extends Plugin {
         nextFromOffset,
         toSelect
       );
-      console.log({ nextSel, isSelected: this.isSelected(editor, nextSel) });
       this.setSels(appendQ, editor, nextSel);
+
       editor.scrollIntoView({
         from: nextSel.anchor,
         to: nextSel.head,
       });
+      const { top, left } = editor.getScrollInfo();
+      editor.scrollTo(left, top + (mode === "next" ? 50 : -50));
     } else {
       new Notice(`No instance of '${toSelect}' found anywhere in note.`);
     }
