@@ -208,19 +208,15 @@ export default class ACPlugin extends Plugin {
     return newSelections;
   }
 
-  setSels(
-    appendQ: boolean,
-    editor: Editor,
-    editorSelection: EditorSelectionOrCaret
-  ) {
+  setSels(appendQ: boolean, editor: Editor, newSel: EditorSelectionOrCaret) {
     if (appendQ) {
       const currSelections: EditorSelectionOrCaret[] = editor.listSelections();
 
       const reconSelections = this.reconstructSels(currSelections);
-      reconSelections.push(editorSelection);
+      reconSelections.push(newSel);
       editor.setSelections(reconSelections);
     } else {
-      editor.setSelections([editorSelection]);
+      editor.setSelections([newSel]);
     }
   }
 
@@ -234,10 +230,9 @@ export default class ACPlugin extends Plugin {
     const { anchor, head } = editor.listSelections().last();
     // If last selection has something selected
     if (!(anchor.line === head.line && anchor.ch === head.ch)) {
+      toSelect = editor.getRange(anchor, head);
       if (editor.posToOffset(anchor) > editor.posToOffset(head)) {
         toSelect = editor.getRange(head, anchor);
-      } else {
-        toSelect = editor.getRange(anchor, head);
       }
       return { toSelect, wordA, wordH };
     }
@@ -279,7 +274,6 @@ export default class ACPlugin extends Plugin {
           editor.posToOffset(sel.anchor) === offA &&
           editor.posToOffset(sel.head) === offH
       );
-
     return !!matchingSels.length;
   }
 
@@ -289,21 +283,19 @@ export default class ACPlugin extends Plugin {
     fromOffset: number,
     mode: "next" | "prev"
   ) {
-    const copyMatches = [...matches];
-
-    let i = copyMatches.findIndex((m) => m.index > fromOffset);
-    if (i === -1) {
-      i = 0;
-    }
-    while (copyMatches.length) {
-      const nextCandidate = copyMatches[i];
-      const sel = this.createSel(editor, nextCandidate.index, nextCandidate[0]);
-      if (!this.isSelected(editor, sel)) {
-        return nextCandidate;
-      } else {
-        copyMatches.slice(i, 1);
-        i++;
-      }
+    if (mode === "next") {
+      return (
+        matches.find((m) => m.index > fromOffset) ??
+        matches.find((m) => {
+          const sel = this.createSel(editor, m.index, m[0]);
+          return m.index < fromOffset && !this.isSelected(editor, sel);
+        })
+      );
+    } else {
+      // This mode is not set up to handle the bug from #18 when adding next instance to sels
+      return (
+        matches.filter((m) => m.index < fromOffset).last() ?? matches.last()
+      );
     }
   }
 
@@ -334,15 +326,8 @@ export default class ACPlugin extends Plugin {
     const regex = createRegex(q);
     const matches = [...content.matchAll(regex)];
 
-    let match;
-    if (mode === "next") {
-      match = this.nextNotSelected(editor, matches, fromOffset, mode);
-    } else {
-      match =
-        matches.filter((m) => m.index < fromOffset).last() ?? matches.last();
-    }
+    let match = this.nextNotSelected(editor, matches, fromOffset, mode);
     nextFromOffset = match?.index;
-    console.log({ matches, match, nextFromOffset });
     toSelect = match?.[0] ?? toSelect;
 
     if (nextFromOffset !== undefined) {
@@ -357,10 +342,10 @@ export default class ACPlugin extends Plugin {
         from: nextSel.anchor,
         to: nextSel.head,
       });
-      const { top, left } = editor.getScrollInfo();
-      editor.scrollTo(left, top + (mode === "next" ? 50 : -50));
     } else {
-      new Notice(`No instance of '${toSelect}' found anywhere in note.`);
+      new Notice(
+        `No instance of '${toSelect}' found anywhere in note (that isn't already selected).`
+      );
     }
   }
 
@@ -393,7 +378,6 @@ export default class ACPlugin extends Plugin {
     const { side } = leaf.getRoot();
     this.settings.savedQViewState = side;
     await this.saveSettings();
-    console.log({ side });
   }
 
   async onunload() {
