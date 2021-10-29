@@ -1,4 +1,17 @@
 ## Advanced Cursors Changelog
+### [0.1.2](https://github.com/SkepticMystic/advanced-cursors/compare/0.1.1...0.1.2) (2021-10-29)
+
+
+### Bug Fixes
+
+* :bug: Adding next instance to selections broke when first selection wasn't first instance ([b44739d](https://github.com/SkepticMystic/advanced-cursors/commit/b44739d8a7cd35d8b88b9ceddc85333327071012))
+* :bug: Scrolling moves cursor more into middle ([bd58eef](https://github.com/SkepticMystic/advanced-cursors/commit/bd58eef1d48fc57d0c4c7655ec24f0c43f0b7d16))
+
+
+### Documentation
+
+* :bug: Add back feat and fix sections ([a99d884](https://github.com/SkepticMystic/advanced-cursors/commit/a99d884ffb1d8ae2b6c96c4b52fa77fc41a0f3d2))
+
 ### [0.1.1](https://github.com/SkepticMystic/advanced-cursors/compare/0.1.0...0.1.1) (2021-10-28)
 
 ## [0.1.0](https://github.com/SkepticMystic/advanced-cursors/compare/0.0.43...0.1.0) (2021-10-27)
