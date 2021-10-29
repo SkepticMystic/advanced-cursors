@@ -1,4 +1,11 @@
 ## Advanced Cursors Changelog
+### [0.1.3](https://github.com/SkepticMystic/advanced-cursors/compare/0.1.2...0.1.3) (2021-10-29)
+
+
+### Bug Fixes
+
+* :bug: Fix previous release. Better approach for nextNotSelected ([192cb2b](https://github.com/SkepticMystic/advanced-cursors/commit/192cb2b95e68034a9e8c07ebed2fe91d0ed3d287))
+
 ### [0.1.2](https://github.com/SkepticMystic/advanced-cursors/compare/0.1.1...0.1.2) (2021-10-29)
 
 
