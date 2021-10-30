@@ -24,27 +24,6 @@ import { DEFAULT_SETTINGS, VIEW_TYPE_AC } from "./const";
 import { CursorsModal } from "./CursorsModal";
 import { ACSettingTab } from "./SettingTab";
 
-declare module "obsidian" {
-  interface App {
-    commands: {
-      removeCommand: (id: string) => unknown;
-    };
-  }
-
-  interface Editor {
-    cm: {
-      findWordAt: (pos: EditorPosition) => EditorSelection | null;
-      state: {
-        wordAt: (offset: number) => { fromOffset: number; toOffset: number };
-      };
-    };
-  }
-
-  interface WorkspaceItem {
-    side: "left" | "right";
-  }
-}
-
 export default class ACPlugin extends Plugin {
   settings: ACSettings;
   view: SavedQView;
