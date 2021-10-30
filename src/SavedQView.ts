@@ -1,7 +1,6 @@
 import { ItemView, MarkdownView, WorkspaceLeaf } from "obsidian";
 import { addFeatherIcon } from "obsidian-community-lib";
 import { VIEW_TYPE_AC } from "src/const";
-import { CursorsModal } from "src/CursorsModal";
 import type ACPlugin from "src/main";
 import { displayRegex } from "src/utils";
 
@@ -56,7 +55,7 @@ export default class SavedQView extends ItemView {
         const view = workspace.getActiveViewOfType(MarkdownView);
         if (view) {
           const { editor } = view;
-          plugin.selectInstance(editor, false, "all", q);
+          plugin.selectInstance(editor, false, "All", q);
           editor.focus();
         }
       });
@@ -65,7 +64,7 @@ export default class SavedQView extends ItemView {
         const view = workspace.getActiveViewOfType(MarkdownView);
         if (view) {
           const { editor } = view;
-          plugin.selectInstance(editor, false, "next", q);
+          plugin.selectInstance(editor, false, "Next", q);
           editor.focus();
         }
       });

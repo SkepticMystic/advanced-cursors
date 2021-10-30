@@ -7,10 +7,11 @@ export interface Query {
 
 export interface ACSettings {
   savedQueries: Query[];
-  savedQViewState: "left" | "right";
+  savedQViewSide: "left" | "right";
   lastQ: Query;
 }
 
+export type Mode = "All" | "Next" | "Prev";
 declare module "obsidian" {
   interface App {
     commands: {

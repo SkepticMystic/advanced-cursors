@@ -1,13 +1,16 @@
-import type { Query } from "src/interfaces";
+import type { App } from "obsidian";
+import { MODES } from "src/const";
+import type { Mode, Query } from "src/interfaces";
 
-export const cmdRunId = (q: Query) => `AC-All: ${q.name} -> ${q.query}`;
-export const cmdRunName = (q: Query) => `All: ${q.name} → ${displayRegex(q)}`;
+export const cmdId = (q: Query, mode: Mode) =>
+  `AC-${mode}: ${q.name} -> ${q.query}`;
+export const cmdName = (q: Query, mode: Mode) => `${mode}: ${displayQ(q)}`;
 
-export const cmdNextId = (q: Query) => `AC-Next: ${q.name} -> ${q.query}`;
-export const cmdNextName = (q: Query) => `Next: ${q.name} → ${displayRegex(q)}`;
-
-export const cmdPrevId = (q: Query) => `AC-Prev: ${q.name} -> ${q.query}`;
-export const cmdPrevName = (q: Query) => `Prev: ${q.name} → ${displayRegex(q)}`;
+export const removeQCmds = (app: App, q: Query) => {
+  MODES.forEach((mode) => {
+    app.commands.removeCommand("advanced-cursors:" + cmdId(q, mode));
+  });
+};
 
 export const createRegex = (q: Query) => {
   if (q.regexQ) {
@@ -22,8 +25,11 @@ export const createRegex = (q: Query) => {
 };
 
 export const displayRegex = (q: Query) => {
-  const regex = createRegex(q);
-  let { source, flags } = regex;
+  let { source, flags } = createRegex(q);
   flags = flags.replace("g", "");
   return `/${source}/${flags}`;
+};
+
+export const displayQ = (q: Query) => {
+  return `${q.name} → ${displayRegex(q)}`;
 };

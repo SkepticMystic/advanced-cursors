@@ -1,8 +1,7 @@
 import { App, Modal, Notice, PluginSettingTab } from "obsidian";
 import { addChangelogButton } from "obsidian-community-lib";
-import type { Query } from "src/interfaces";
 import type ACPlugin from "src/main";
-import { cmdNextId, cmdRunId } from "src/utils";
+import { displayQ, removeQCmds } from "src/utils";
 import AddQComponent from "./Components/AddQComponent.svelte";
 
 export class ACSettingTab extends PluginSettingTab {
@@ -68,10 +67,10 @@ export class ACSettingTab extends PluginSettingTab {
       console.log({ savedQs: settings.savedQueries, removedQ });
       this.initExistingSavedQs(this.savedQsDiv);
 
-      this.app.commands.removeCommand(cmdRunId(removedQ));
-      this.app.commands.removeCommand(cmdNextId(removedQ));
+      removeQCmds(this.app, removedQ);
 
       this.plugin.view.draw();
+      new Notice(`${displayQ(removedQ)} removed`);
     } catch (error) {
       console.log(error);
       new Notice(

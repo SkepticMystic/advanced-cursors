@@ -1,9 +1,10 @@
 <script lang="ts">
   import { App, Notice } from "obsidian";
+  import { MODES } from "src/const";
   import type { Query } from "src/interfaces";
   import type ACPlugin from "src/main";
   import type { ACSettingTab, AddQModal } from "src/SettingTab";
-  import { cmdNextId, cmdPrevId, cmdRunId } from "src/utils";
+  import { removeQCmds } from "src/utils";
   import { onMount } from "svelte";
 
   export let app: App;
@@ -46,12 +47,8 @@
       const newQ = { name, query, regexQ, flags };
 
       if (i > -1) {
-        // Remove old command
-        app.commands.removeCommand(cmdRunId(oldQ));
-        app.commands.removeCommand(cmdNextId(oldQ));
-        app.commands.removeCommand(cmdPrevId(oldQ));
+        removeQCmds(app, oldQ);
 
-        // Overwrite old Q
         plugin.settings.savedQueries[i] = newQ;
         new Notice(`${name} → ${query} updated.`);
       } else {
@@ -64,9 +61,7 @@
       settingsTab.initExistingSavedQs(modal.savedQsDiv);
 
       //   Add new plugin command
-      plugin.addRunCmd(newQ);
-      plugin.addNextCmd(newQ);
-      plugin.addPrevCmd(newQ);
+      MODES.forEach((mode) => this.addCmd(newQ, mode));
 
       plugin.view.draw();
       modal.close();

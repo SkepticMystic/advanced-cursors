@@ -9,18 +9,10 @@ import {
   Plugin,
   WorkspaceLeaf,
 } from "obsidian";
-import type { ACSettings as ACSettings, Query } from "src/interfaces";
+import type { ACSettings as ACSettings, Mode, Query } from "src/interfaces";
 import SavedQView from "src/SavedQView";
-import {
-  cmdNextId,
-  cmdNextName,
-  cmdPrevId,
-  cmdPrevName,
-  cmdRunId,
-  cmdRunName,
-  createRegex,
-} from "src/utils";
-import { DEFAULT_SETTINGS, VIEW_TYPE_AC } from "./const";
+import { cmdId, cmdName, createRegex } from "src/utils";
+import { DEFAULT_SETTINGS, MODES, VIEW_TYPE_AC } from "./const";
 import { CursorsModal } from "./CursorsModal";
 import { ACSettingTab } from "./SettingTab";
 
@@ -33,6 +25,7 @@ export default class ACPlugin extends Plugin {
 
     await this.loadSettings();
 
+    // SECTION Commands
     this.addCommand({
       id: "open-regex-match-modal",
       name: "Open Regex Match Modal",
@@ -42,41 +35,44 @@ export default class ACPlugin extends Plugin {
     });
 
     this.settings.savedQueries.forEach((q) => {
-      this.addRunCmd(q);
-      this.addNextCmd(q);
-      this.addPrevCmd(q);
+      MODES.forEach((mode) => this.addCmd(q, mode));
     });
 
+    // SECTION Move to MODE match
     this.addCommand({
       id: "move-to-next-match",
       name: "Move to next instance of current selection",
       editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, false, "next");
+        this.selectInstance(editor, false, "Next");
       },
     });
     this.addCommand({
       id: "move-to-previous-match",
       name: "Move to previous instance of current selection",
       editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, false, "prev");
+        this.selectInstance(editor, false, "Prev");
       },
     });
+    // !SECTION Move to MODE match
 
+    // SECTION Add MODE match to selections
     this.addCommand({
       id: "add-next-match-to-selections",
       name: "Add next instance of current selection to selections",
       editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, true, "next");
+        this.selectInstance(editor, true, "Next");
       },
     });
     this.addCommand({
       id: "add-prev-match-to-selections",
       name: "Add previous instance of current selection to selections",
       editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, true, "prev");
+        this.selectInstance(editor, true, "Prev");
       },
     });
+    // !SECTION Add MODE match to selections
 
+    // SECTION Copy Lines
     this.addCommand({
       id: "copy-line-up",
       name: "Copy Current Line Upwards",
@@ -92,6 +88,8 @@ export default class ACPlugin extends Plugin {
         this.copyLineUorD(editor, "down");
       },
     });
+    // !SECTION Copy Lines
+    // !SECTION Commands
 
     this.registerView(
       VIEW_TYPE_AC,
@@ -104,32 +102,12 @@ export default class ACPlugin extends Plugin {
     this.addSettingTab(new ACSettingTab(this.app, this));
   }
 
-  addRunCmd(q: Query) {
+  addCmd(q: Query, mode: Mode) {
     this.addCommand({
-      id: cmdRunId(q),
-      name: cmdRunName(q),
+      id: cmdId(q, mode),
+      name: cmdName(q, mode),
       editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, false, "all", q);
-      },
-    });
-  }
-
-  addNextCmd(q: Query) {
-    this.addCommand({
-      id: cmdNextId(q),
-      name: cmdNextName(q),
-      editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, false, "next", q);
-      },
-    });
-  }
-
-  addPrevCmd(q: Query) {
-    this.addCommand({
-      id: cmdPrevId(q),
-      name: cmdPrevName(q),
-      editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, false, "prev", q);
+        this.selectInstance(editor, false, mode, q);
       },
     });
   }
@@ -293,9 +271,9 @@ export default class ACPlugin extends Plugin {
     editor: Editor,
     matches: RegExpMatchArray[],
     fromOffset: number,
-    mode: "next" | "prev" | "all"
+    mode: Mode
   ) {
-    if (mode === "next") {
+    if (mode === "Next") {
       return (
         matches.find((m) => m.index > fromOffset) ??
         matches.find((m) => {
@@ -303,7 +281,7 @@ export default class ACPlugin extends Plugin {
           return m.index < fromOffset && !this.isSelected(editor, sel);
         })
       );
-    } else if (mode === "prev") {
+    } else if (mode === "Prev") {
       // This mode is not set up to handle the bug from #18 when adding next instance to sels
       return (
         matches.filter((m) => m.index < fromOffset).last() ??
@@ -320,7 +298,7 @@ export default class ACPlugin extends Plugin {
   selectInstance(
     editor: Editor,
     appendQ = false,
-    mode: "prev" | "next" | "all",
+    mode: Mode,
     existingQ?: Query
   ) {
     // const {setSelection, getValue, somethingSelected, posToOffset, getCursor, listSelections, scrollIntoView} = editor
@@ -341,7 +319,7 @@ export default class ACPlugin extends Plugin {
     let matches = [...content.matchAll(regex)];
 
     const nextSels: EditorSelection[] = [];
-    if (mode === "all") {
+    if (mode === "All") {
       let offset = 0;
       if (editor.somethingSelected()) {
         offset = editor.posToOffset(editor.getCursor("from"));
@@ -358,10 +336,10 @@ export default class ACPlugin extends Plugin {
 
     let nextFromOffset;
     let latestSel = editor.listSelections().last();
-    if (mode === "prev") {
+    if (mode === "Prev") {
       latestSel = editor.listSelections().first();
     }
-    const lastPos = latestSel[mode === "next" ? "head" : "anchor"];
+    const lastPos = latestSel[mode === "Next" ? "head" : "anchor"];
     const fromOffset = editor.posToOffset(lastPos);
 
     let match = this.nextNotSelected(editor, matches, fromOffset, mode);
@@ -400,7 +378,7 @@ export default class ACPlugin extends Plugin {
 
     (
       leaf ??
-      (this.settings.savedQViewState === "right"
+      (this.settings.savedQViewSide === "right"
         ? this.app.workspace.getRightLeaf(false)
         : this.app.workspace.getLeftLeaf(false))
     ).setViewState({
@@ -412,7 +390,7 @@ export default class ACPlugin extends Plugin {
   async saveViewState() {
     const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_AC)[0];
     const { side } = leaf.getRoot();
-    this.settings.savedQViewState = side;
+    this.settings.savedQViewSide = side;
     await this.saveSettings();
   }
 

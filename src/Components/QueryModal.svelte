@@ -23,7 +23,7 @@
       flags: flagsEl.value,
       regexQ: regexQEl.checked,
     };
-    plugin.selectInstance(editor, false, "all", q);
+    plugin.selectInstance(editor, false, "All", q);
     modal.close();
     plugin.settings.lastQ = q;
     await plugin.saveSettings();
@@ -67,7 +67,7 @@
         <span
           class="savedQ-name"
           on:click={() => {
-            plugin.selectInstance(editor, false, "all", q);
+            plugin.selectInstance(editor, false, "All", q);
             modal.close();
           }}
         >
@@ -77,7 +77,7 @@
         <span
           class="savedQ-query"
           on:click={() => {
-            plugin.selectInstance(editor, false, "all", q);
+            plugin.selectInstance(editor, false, "All", q);
             modal.close();
           }}
         >
