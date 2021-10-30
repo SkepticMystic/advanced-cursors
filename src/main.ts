@@ -127,6 +127,19 @@ export default class ACPlugin extends Plugin {
     return lines;
   }
 
+  scrollNicely(ed: Editor, sel: EditorSelection) {
+    const [A, H] = [sel.anchor, sel.head];
+    const lastLine = ed.lastLine();
+
+    const aLine = A.line >= 1 ? A.line - 1 : A.line;
+    const hLine = H.line <= lastLine - 1 ? H.line + 1 : H.line;
+
+    ed.scrollIntoView({
+      from: { line: aLine, ch: A.ch },
+      to: { line: hLine, ch: H.ch },
+    });
+  }
+
   copyLineUorD(ed: Editor, mode: "up" | "down") {
     let [cursorFrom, cursorTo] = [ed.getCursor("from"), ed.getCursor("to")];
     const { line } = cursorTo;
@@ -140,10 +153,9 @@ export default class ACPlugin extends Plugin {
       cursorFrom.line += copyLines.length;
       cursorTo.line += copyLines.length;
     }
+
     ed.setSelection(cursorFrom, cursorTo);
-    // @ts-ignore
-    const { top, left, clientHeight } = ed.getScrollInfo();
-    ed.scrollTo(left, top + clientHeight / 2);
+    this.scrollNicely(ed, { anchor: cursorFrom, head: cursorTo });
   }
 
   matchToSel(ed: Editor, match: RegExpMatchArray, offset = 0) {
@@ -157,20 +169,6 @@ export default class ACPlugin extends Plugin {
     const head: EditorPosition = { ch: chH, line: lineH };
     return { anchor, head };
   }
-
-  // createSel(
-  //   editor: Editor,
-  //   nextFromOffset: number,
-  //   toSelect: string
-  // ): EditorSelection {
-  //   const { line: lineA, ch: chA } = editor.offsetToPos(nextFromOffset);
-  //   const { line: lineH, ch: chH } = editor.offsetToPos(
-  //     nextFromOffset + toSelect.length
-  //   );
-  //   const anchor: EditorPosition = { ch: chA, line: lineA };
-  //   const head: EditorPosition = { ch: chH, line: lineH };
-  //   return { anchor, head };
-  // }
 
   reconstructSels(sels: EditorSelectionOrCaret[]) {
     return sels.map((sel) => {
@@ -353,10 +351,7 @@ export default class ACPlugin extends Plugin {
 
       this.setSels(appendQ, ed, ...nextSels);
 
-      ed.scrollIntoView({
-        from: nextSel.anchor,
-        to: nextSel.head,
-      });
+      this.scrollNicely(ed, nextSel);
     } else {
       new Notice(
         `No instance of '${toSelect}' found anywhere in note (that isn't already selected).`
