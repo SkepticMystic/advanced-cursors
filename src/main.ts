@@ -15,6 +15,7 @@ import { cmdId, cmdName, createRegex } from "src/utils";
 import { DEFAULT_SETTINGS, MODES, VIEW_TYPE_AC } from "./const";
 import { CursorsModal } from "./CursorsModal";
 import { ACSettingTab } from "./SettingTab";
+import { openView, saveViewSide } from "obsidian-community-lib";
 
 export default class ACPlugin extends Plugin {
   settings: ACSettings;
@@ -96,7 +97,12 @@ export default class ACPlugin extends Plugin {
       (leaf: WorkspaceLeaf) => (this.view = new SavedQView(leaf, this))
     );
     this.app.workspace.onLayoutReady(async () => {
-      await this.initView(VIEW_TYPE_AC, SavedQView);
+      await openView(
+        this.app,
+        VIEW_TYPE_AC,
+        SavedQView,
+        this.settings.savedQViewSide
+      );
     });
 
     this.addSettingTab(new ACSettingTab(this.app, this));
@@ -385,39 +391,8 @@ export default class ACPlugin extends Plugin {
     }
   }
 
-  initView = async <YourView extends ItemView>(
-    type: string,
-    viewClass: Constructor<YourView>
-  ): Promise<void> => {
-    let leaf: WorkspaceLeaf = null;
-    for (leaf of this.app.workspace.getLeavesOfType(type)) {
-      if (leaf.view instanceof viewClass) {
-        return;
-      }
-      await leaf.setViewState({ type: "empty" });
-      break;
-    }
-
-    (
-      leaf ??
-      (this.settings.savedQViewSide === "right"
-        ? this.app.workspace.getRightLeaf(false)
-        : this.app.workspace.getLeftLeaf(false))
-    ).setViewState({
-      type,
-      active: true,
-    });
-  };
-
-  async saveViewState() {
-    const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_AC)[0];
-    const { side } = leaf.getRoot();
-    this.settings.savedQViewSide = side;
-    await this.saveSettings();
-  }
-
   async onunload() {
-    await this.saveViewState();
+    await saveViewSide(this.app, this, VIEW_TYPE_AC, "savedQViewSide");
     this.app.workspace.detachLeavesOfType(VIEW_TYPE_AC);
   }
 

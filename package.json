@@ -45,7 +45,7 @@
     },
     "dependencies": {
         "@tsconfig/svelte": "^2.0.1",
-        "obsidian-community-lib": "0.0.18",
+        "obsidian-community-lib": "0.1.0",
         "standard-version": "^9.3.1",
         "svelte": "3.35.0"
     }
