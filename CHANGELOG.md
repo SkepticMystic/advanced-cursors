@@ -1,4 +1,11 @@
 ## Advanced Cursors Changelog
+### [0.3.2](https://github.com/SkepticMystic/advanced-cursors/compare/0.3.1...0.3.2) (2021-10-30)
+
+
+### Features
+
+* :sparkles: Fix [#20](https://github.com/SkepticMystic/advanced-cursors/issues/20): Setting to toggle "open saved query view onload" ([ba7be54](https://github.com/SkepticMystic/advanced-cursors/commit/ba7be548912aea90c725880b32eb77de41205c12))
+
 ### [0.3.1](https://github.com/SkepticMystic/advanced-cursors/compare/0.3.0...0.3.1) (2021-10-30)
 
 
