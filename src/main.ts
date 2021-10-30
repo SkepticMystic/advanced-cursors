@@ -5,6 +5,7 @@ import {
   EditorSelectionOrCaret,
   Notice,
   Plugin,
+  TextMarker,
   WorkspaceLeaf,
 } from "obsidian";
 import { openView, saveViewSide } from "obsidian-community-lib";
@@ -202,15 +203,20 @@ export default class ACPlugin extends Plugin {
 
     // Set new
     newSels.forEach((newSel) => {
+      let marker: TextMarker;
       if (this.anchorAheadOfHead(ed, newSel)) {
-        doc.markText(newSel.head, newSel.anchor, {
+        marker = doc.markText(newSel.head, newSel.anchor, {
           className: "AC-flashNewSel",
         });
       } else {
-        doc.markText(newSel.anchor, newSel.head, {
+        marker = doc.markText(newSel.anchor, newSel.head, {
           className: "AC-flashNewSel",
         });
       }
+
+      setTimeout(() => {
+        marker.clear();
+      }, 1000);
     });
   }
 
