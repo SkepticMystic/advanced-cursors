@@ -1,21 +1,19 @@
 import {
-  Constructor,
   Editor,
   EditorPosition,
   EditorSelection,
   EditorSelectionOrCaret,
-  ItemView,
   Notice,
   Plugin,
   WorkspaceLeaf,
 } from "obsidian";
+import { openView, saveViewSide } from "obsidian-community-lib";
 import type { ACSettings as ACSettings, Mode, Query } from "src/interfaces";
 import SavedQView from "src/SavedQView";
 import { cmdId, cmdName, createRegex } from "src/utils";
 import { DEFAULT_SETTINGS, MODES, VIEW_TYPE_AC } from "./const";
 import { CursorsModal } from "./CursorsModal";
 import { ACSettingTab } from "./SettingTab";
-import { openView, saveViewSide } from "obsidian-community-lib";
 
 export default class ACPlugin extends Plugin {
   settings: ACSettings;
@@ -146,10 +144,9 @@ export default class ACPlugin extends Plugin {
       cursorTo.line += copyLines.length;
     }
     editor.setSelection(cursorFrom, cursorTo);
-    let [from, to] = [editor.getCursor("from"), editor.getCursor("to")];
-    editor.scrollIntoView({ from, to });
-    const { top, left } = editor.getScrollInfo();
-    editor.scrollTo(left, top + window.innerHeight / 2);
+    // @ts-ignore
+    const { top, left, clientHeight } = editor.getScrollInfo();
+    editor.scrollTo(left, top + clientHeight / 2);
   }
 
   matchToSel(editor: Editor, match: RegExpMatchArray, offset = 0) {

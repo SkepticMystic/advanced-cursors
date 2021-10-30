@@ -26,6 +26,7 @@ declare module "obsidian" {
         wordAt: (offset: number) => { fromOffset: number; toOffset: number };
       };
       getDoc: () => Doc;
+      getScrollInfo: () => { top: number; left: number; clientHeight: number };
     };
   }
 
