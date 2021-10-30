@@ -36,31 +36,36 @@ export default class SavedQView extends ItemView {
   }
 
   async draw(): Promise<void> {
-    const { settings } = this.plugin;
-    const { contentEl } = this;
+    const {
+      settings: { savedQueries },
+    } = this.plugin;
+    const {
+      contentEl,
+      app: { workspace },
+      plugin,
+    } = this;
     contentEl.empty();
     contentEl.style.padding = "5px 5px 0px 5px";
 
     const qsDiv = contentEl.createDiv();
-    settings.savedQueries.forEach((q) => {
+    savedQueries.forEach((q) => {
       const qDiv = qsDiv.createDiv({ text: q.name, cls: "savedQ-view-q" });
       qDiv.ariaLabel = displayRegex(q);
 
       qDiv.addEventListener("contextmenu", () => {
-        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        const view = workspace.getActiveViewOfType(MarkdownView);
         if (view) {
           const { editor } = view;
-          const cursorModal = new CursorsModal(this.app, editor, this.plugin);
-          cursorModal.submit(q);
+          plugin.selectInstance(editor, false, "all", q);
           editor.focus();
         }
       });
 
       qDiv.addEventListener("click", () => {
-        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+        const view = workspace.getActiveViewOfType(MarkdownView);
         if (view) {
           const { editor } = view;
-          this.plugin.selectInstance(editor, false, "next", q);
+          plugin.selectInstance(editor, false, "next", q);
           editor.focus();
         }
       });

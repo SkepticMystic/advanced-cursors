@@ -109,8 +109,7 @@ export default class ACPlugin extends Plugin {
       id: cmdRunId(q),
       name: cmdRunName(q),
       editorCallback: (editor: Editor) => {
-        const cursorModal = new CursorsModal(this.app, editor, this);
-        cursorModal.submit(q);
+        this.selectInstance(editor, false, "all", q);
       },
     });
   }
@@ -169,8 +168,8 @@ export default class ACPlugin extends Plugin {
     editor.scrollTo(left, top + window.innerHeight / 2);
   }
 
-  matchToSel(editor: Editor, match: RegExpMatchArray) {
-    const fromOff = match.index;
+  matchToSel(editor: Editor, match: RegExpMatchArray, offset = 0) {
+    const fromOff = match.index + offset;
     const toOff = fromOff + match[0].length;
 
     const { line: lineA, ch: chA } = editor.offsetToPos(fromOff);
@@ -294,7 +293,7 @@ export default class ACPlugin extends Plugin {
     editor: Editor,
     matches: RegExpMatchArray[],
     fromOffset: number,
-    mode: "next" | "prev"
+    mode: "next" | "prev" | "all"
   ) {
     if (mode === "next") {
       return (
@@ -304,7 +303,7 @@ export default class ACPlugin extends Plugin {
           return m.index < fromOffset && !this.isSelected(editor, sel);
         })
       );
-    } else {
+    } else if (mode === "prev") {
       // This mode is not set up to handle the bug from #18 when adding next instance to sels
       return (
         matches.filter((m) => m.index < fromOffset).last() ??
@@ -321,9 +320,10 @@ export default class ACPlugin extends Plugin {
   selectInstance(
     editor: Editor,
     appendQ = false,
-    mode: "prev" | "next",
+    mode: "prev" | "next" | "all",
     existingQ?: Query
   ) {
+    // const {setSelection, getValue, somethingSelected, posToOffset, getCursor, listSelections, scrollIntoView} = editor
     let { toSelect, wordA, wordH } = this.getToSelect(editor);
     // Set words under cursor
     if (!editor.somethingSelected() && !existingQ) {
@@ -336,7 +336,26 @@ export default class ACPlugin extends Plugin {
       q = { name: "", query: toSelect, flags: "", regexQ: false };
     }
 
-    const content = editor.getValue();
+    let content = editor.getValue();
+    const regex = createRegex(q);
+    let matches = [...content.matchAll(regex)];
+
+    const nextSels: EditorSelection[] = [];
+    if (mode === "all") {
+      let offset = 0;
+      if (editor.somethingSelected()) {
+        offset = editor.posToOffset(editor.getCursor("from"));
+        content = editor.getSelection();
+        matches = [...content.matchAll(regex)];
+      }
+      matches.forEach((m) => {
+        nextSels.push(this.matchToSel(editor, m, offset));
+      });
+      this.setSels(appendQ, editor, ...nextSels);
+      new Notice(`${matches.length} matches found.`);
+      return;
+    }
+
     let nextFromOffset;
     let latestSel = editor.listSelections().last();
     if (mode === "prev") {
@@ -345,21 +364,15 @@ export default class ACPlugin extends Plugin {
     const lastPos = latestSel[mode === "next" ? "head" : "anchor"];
     const fromOffset = editor.posToOffset(lastPos);
 
-    const regex = createRegex(q);
-    const matches = [...content.matchAll(regex)];
-
     let match = this.nextNotSelected(editor, matches, fromOffset, mode);
     nextFromOffset = match?.index;
     toSelect = match?.[0] ?? toSelect;
 
     if (nextFromOffset !== undefined) {
       const nextSel: EditorSelection = this.matchToSel(editor, match);
-      // this.createSel(
-      //   editor,
-      //   nextFromOffset,
-      //   toSelect
-      // );
-      this.setSels(appendQ, editor, nextSel);
+      nextSels.push(nextSel);
+
+      this.setSels(appendQ, editor, ...nextSels);
 
       editor.scrollIntoView({
         from: nextSel.anchor,

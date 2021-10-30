@@ -1,10 +1,14 @@
 <script lang="ts">
+  import type { Editor } from "obsidian";
+  import { displayRegex } from "src/utils";
+
   import type { CursorsModal } from "src/CursorsModal";
   import type ACPlugin from "src/main";
   import { onMount } from "svelte";
 
   export let modal: CursorsModal;
   export let plugin: ACPlugin;
+  export let editor: Editor;
 
   const { lastQ } = plugin.settings;
 
@@ -19,7 +23,8 @@
       flags: flagsEl.value,
       regexQ: regexQEl.checked,
     };
-    modal.submit(q);
+    plugin.selectInstance(editor, false, "all", q);
+    modal.close();
     plugin.settings.lastQ = q;
     await plugin.saveSettings();
   }
@@ -61,8 +66,9 @@
       <li class="savedQ">
         <span
           class="savedQ-name"
-          on:click={(e) => {
-            modal.submit(q);
+          on:click={() => {
+            plugin.selectInstance(editor, false, "all", q);
+            modal.close();
           }}
         >
           {q.name}
@@ -70,11 +76,12 @@
         <span>→</span>
         <span
           class="savedQ-query"
-          on:click={(e) => {
-            modal.submit(q);
+          on:click={() => {
+            plugin.selectInstance(editor, false, "all", q);
+            modal.close();
           }}
         >
-          /{q.query}/{q.flags}
+          {displayRegex(q)}
         </span>
       </li>
     {/each}
