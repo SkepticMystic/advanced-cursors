@@ -9,7 +9,7 @@
 
   export let modal: CursorsModal;
   export let plugin: ACPlugin;
-  export let editor: Editor;
+  export let ed: Editor;
 
   const { lastQ } = plugin.settings;
 
@@ -24,14 +24,14 @@
       flags: flagsEl.value,
       regexQ: regexQEl.checked,
     };
-    plugin.selectInstance(editor, false, "All", q);
+    plugin.selectInstance(ed, false, "All", q);
     modal.close();
     plugin.settings.lastQ = q;
     await plugin.saveSettings();
   }
 
   function runSavedQ(q: Query, mode: Mode) {
-    plugin.selectInstance(editor, false, mode, q);
+    plugin.selectInstance(ed, false, mode, q);
     modal.close();
   }
 

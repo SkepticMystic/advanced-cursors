@@ -28,8 +28,8 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: "open-regex-match-modal",
       name: "Open Regex Match Modal",
-      editorCallback: (editor: Editor) => {
-        new CursorsModal(this.app, editor, this).open();
+      editorCallback: (ed: Editor) => {
+        new CursorsModal(this.app, ed, this).open();
       },
     });
 
@@ -41,15 +41,15 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: "move-to-next-match",
       name: "Move to next instance of current selection",
-      editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, false, "Next");
+      editorCallback: (ed: Editor) => {
+        this.selectInstance(ed, false, "Next");
       },
     });
     this.addCommand({
       id: "move-to-previous-match",
       name: "Move to previous instance of current selection",
-      editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, false, "Prev");
+      editorCallback: (ed: Editor) => {
+        this.selectInstance(ed, false, "Prev");
       },
     });
     // !SECTION Move to MODE match
@@ -58,15 +58,15 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: "add-next-match-to-selections",
       name: "Add next instance of current selection to selections",
-      editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, true, "Next");
+      editorCallback: (ed: Editor) => {
+        this.selectInstance(ed, true, "Next");
       },
     });
     this.addCommand({
       id: "add-prev-match-to-selections",
       name: "Add previous instance of current selection to selections",
-      editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, true, "Prev");
+      editorCallback: (ed: Editor) => {
+        this.selectInstance(ed, true, "Prev");
       },
     });
     // !SECTION Add MODE match to selections
@@ -75,16 +75,16 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: "copy-line-up",
       name: "Copy Current Line Upwards",
-      editorCallback: (editor: Editor) => {
-        this.copyLineUorD(editor, "up");
+      editorCallback: (ed: Editor) => {
+        this.copyLineUorD(ed, "up");
       },
     });
 
     this.addCommand({
       id: "copy-line-down",
       name: "Copy Current Line Downwards",
-      editorCallback: (editor: Editor) => {
-        this.copyLineUorD(editor, "down");
+      editorCallback: (ed: Editor) => {
+        this.copyLineUorD(ed, "down");
       },
     });
     // !SECTION Copy Lines
@@ -110,104 +110,92 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: cmdId(q, mode),
       name: cmdName(q, mode),
-      editorCallback: (editor: Editor) => {
-        this.selectInstance(editor, false, mode, q);
+      editorCallback: (ed: Editor) => {
+        this.selectInstance(ed, false, mode, q);
       },
     });
   }
 
-  linesOfSel(editor: Editor) {
-    const [from, to] = [editor.getCursor("from"), editor.getCursor("to")];
+  linesOfSel(ed: Editor) {
+    const [from, to] = [ed.getCursor("from"), ed.getCursor("to")];
     const [fromLine, toLine] = [from.line, to.line];
 
     const lines: string[] = [];
     for (let i = fromLine; i <= toLine; i++) {
-      lines.push(editor.getLine(i));
+      lines.push(ed.getLine(i));
     }
     return lines;
   }
 
-  copyLineUorD(editor: Editor, mode: "up" | "down") {
-    let [cursorFrom, cursorTo] = [
-      editor.getCursor("from"),
-      editor.getCursor("to"),
-    ];
+  copyLineUorD(ed: Editor, mode: "up" | "down") {
+    let [cursorFrom, cursorTo] = [ed.getCursor("from"), ed.getCursor("to")];
     const { line } = cursorTo;
 
-    const copyLines = this.linesOfSel(editor);
-    const lines = editor.getValue().split("\n");
+    const copyLines = this.linesOfSel(ed);
+    const lines = ed.getValue().split("\n");
     lines.splice(line + (mode === "up" ? 0 : 1), 0, ...copyLines);
-    editor.setValue(lines.join("\n"));
+    ed.setValue(lines.join("\n"));
 
     if (mode === "down") {
       cursorFrom.line += copyLines.length;
       cursorTo.line += copyLines.length;
     }
-    editor.setSelection(cursorFrom, cursorTo);
+    ed.setSelection(cursorFrom, cursorTo);
     // @ts-ignore
-    const { top, left, clientHeight } = editor.getScrollInfo();
-    editor.scrollTo(left, top + clientHeight / 2);
+    const { top, left, clientHeight } = ed.getScrollInfo();
+    ed.scrollTo(left, top + clientHeight / 2);
   }
 
-  matchToSel(editor: Editor, match: RegExpMatchArray, offset = 0) {
+  matchToSel(ed: Editor, match: RegExpMatchArray, offset = 0) {
     const fromOff = match.index + offset;
     const toOff = fromOff + match[0].length;
 
-    const { line: lineA, ch: chA } = editor.offsetToPos(fromOff);
-    const { line: lineH, ch: chH } = editor.offsetToPos(toOff);
+    const { line: lineA, ch: chA } = ed.offsetToPos(fromOff);
+    const { line: lineH, ch: chH } = ed.offsetToPos(toOff);
 
     const anchor: EditorPosition = { ch: chA, line: lineA };
     const head: EditorPosition = { ch: chH, line: lineH };
     return { anchor, head };
   }
 
-  createSel(
-    editor: Editor,
-    nextFromOffset: number,
-    toSelect: string
-  ): EditorSelection {
-    const { line: lineA, ch: chA } = editor.offsetToPos(nextFromOffset);
-    const { line: lineH, ch: chH } = editor.offsetToPos(
-      nextFromOffset + toSelect.length
-    );
-    const anchor: EditorPosition = { ch: chA, line: lineA };
-    const head: EditorPosition = { ch: chH, line: lineH };
-    return { anchor, head };
-  }
+  // createSel(
+  //   editor: Editor,
+  //   nextFromOffset: number,
+  //   toSelect: string
+  // ): EditorSelection {
+  //   const { line: lineA, ch: chA } = editor.offsetToPos(nextFromOffset);
+  //   const { line: lineH, ch: chH } = editor.offsetToPos(
+  //     nextFromOffset + toSelect.length
+  //   );
+  //   const anchor: EditorPosition = { ch: chA, line: lineA };
+  //   const head: EditorPosition = { ch: chH, line: lineH };
+  //   return { anchor, head };
+  // }
 
-  reconstructSels(selections: EditorSelectionOrCaret[]) {
-    const newSelections: EditorSelectionOrCaret[] = [];
-    selections.forEach((selection) => {
-      newSelections.push({
-        anchor: selection.anchor,
-        head: selection.head,
-      });
+  reconstructSels(sels: EditorSelectionOrCaret[]) {
+    return sels.map((sel) => {
+      return { anchor: sel.anchor, head: sel.head };
     });
-    return newSelections;
   }
 
-  setSels(
-    appendQ: boolean,
-    editor: Editor,
-    ...newSels: EditorSelectionOrCaret[]
-  ) {
+  setSels(appendQ: boolean, ed: Editor, ...newSels: EditorSelectionOrCaret[]) {
     if (appendQ) {
-      const currSelections: EditorSelectionOrCaret[] = editor.listSelections();
+      const currSelections: EditorSelectionOrCaret[] = ed.listSelections();
 
       const reconSelections = this.reconstructSels([
         ...currSelections,
         ...newSels,
       ]);
-      editor.setSelections(reconSelections);
+      ed.setSelections(reconSelections);
     } else {
       const reconSelections = this.reconstructSels([...newSels]);
-      editor.setSelections(reconSelections);
+      ed.setSelections(reconSelections);
     }
-    this.clearOldSetNewMSpan(editor, ...newSels);
+    this.clearOldSetNewMSpan(ed, ...newSels);
   }
 
-  clearOldSetNewMSpan(editor: Editor, ...newSels: EditorSelectionOrCaret[]) {
-    const doc = editor.cm.getDoc();
+  clearOldSetNewMSpan(ed: Editor, ...newSels: EditorSelectionOrCaret[]) {
+    const doc = ed.cm.getDoc();
     // Clear old
     const { lines } = doc.children[0];
     lines.forEach((l) => {
@@ -216,7 +204,7 @@ export default class ACPlugin extends Plugin {
 
     // Set new
     newSels.forEach((newSel) => {
-      if (this.anchorAheadOfHead(editor, newSel)) {
+      if (this.anchorAheadOfHead(ed, newSel)) {
         doc.markText(newSel.head, newSel.anchor, {
           className: "AC-flashNewSel",
         });
@@ -228,49 +216,43 @@ export default class ACPlugin extends Plugin {
     });
   }
 
-  anchorAheadOfHead(
-    editor: Editor,
-    sel: EditorSelection | EditorSelectionOrCaret
-  ) {
-    return editor.posToOffset(sel.anchor) > editor.posToOffset(sel.head);
+  anchorAheadOfHead(ed: Editor, sel: EditorSelection | EditorSelectionOrCaret) {
+    return ed.posToOffset(sel.anchor) > ed.posToOffset(sel.head);
   }
 
-  getToSelect(editor: Editor): {
+  getToSelect(ed: Editor): {
     toSelect: string;
     wordA: EditorPosition | undefined;
     wordH: EditorPosition | undefined;
   } {
     let toSelect, wordH: EditorPosition, wordA: EditorPosition;
 
-    const { anchor, head } = editor.listSelections().last();
+    const { anchor, head } = ed.listSelections().last();
     // If last selection has something selected
     if (!(anchor.line === head.line && anchor.ch === head.ch)) {
-      toSelect = editor.getRange(anchor, head);
-      if (editor.posToOffset(anchor) > editor.posToOffset(head)) {
-        toSelect = editor.getRange(head, anchor);
+      toSelect = ed.getRange(anchor, head);
+      if (ed.posToOffset(anchor) > ed.posToOffset(head)) {
+        toSelect = ed.getRange(head, anchor);
       }
       return { toSelect, wordA, wordH };
     }
 
     try {
-      const cursor = editor.getCursor();
-      if (editor.cm?.findWordAt) {
-        const wordRange = editor.cm.findWordAt(cursor);
+      const cursor = ed.getCursor();
+      if (ed.cm?.findWordAt) {
+        const wordRange = ed.cm.findWordAt(cursor);
         [wordA, wordH] = [wordRange.anchor, wordRange.head];
-        toSelect = editor.getRange(wordA, wordH);
-      } else if (editor.cm?.state.wordAt) {
-        const { fromOffset, toOffset } = editor.cm.state.wordAt(
-          editor.posToOffset(cursor)
+        toSelect = ed.getRange(wordA, wordH);
+      } else if (ed.cm?.state.wordAt) {
+        const { fromOffset, toOffset } = ed.cm.state.wordAt(
+          ed.posToOffset(cursor)
         );
-        [wordA, wordH] = [
-          editor.offsetToPos(fromOffset),
-          editor.offsetToPos(toOffset),
-        ];
-        toSelect = editor.getRange(wordA, wordH);
+        [wordA, wordH] = [ed.offsetToPos(fromOffset), ed.offsetToPos(toOffset)];
+        toSelect = ed.getRange(wordA, wordH);
       } else {
         throw new Error("Cannot determine if cm5 or cm6");
       }
-      if (this.anchorAheadOfHead(editor, { anchor: wordA, head: wordH })) {
+      if (this.anchorAheadOfHead(ed, { anchor: wordA, head: wordH })) {
         return { toSelect, wordA: wordH, wordH: wordA };
       }
       return { toSelect, wordA, wordH };
@@ -279,21 +261,21 @@ export default class ACPlugin extends Plugin {
     }
   }
 
-  isSelected(editor: Editor, selection: EditorSelection) {
-    const offA = editor.posToOffset(selection.anchor);
-    const offH = editor.posToOffset(selection.head);
-    const matchingSels = editor
+  isSelected(ed: Editor, selection: EditorSelection) {
+    const offA = ed.posToOffset(selection.anchor);
+    const offH = ed.posToOffset(selection.head);
+    const matchingSels = ed
       .listSelections()
       .filter(
         (sel) =>
-          editor.posToOffset(sel.anchor) === offA &&
-          editor.posToOffset(sel.head) === offH
+          ed.posToOffset(sel.anchor) === offA &&
+          ed.posToOffset(sel.head) === offH
       );
     return !!matchingSels.length;
   }
 
   nextNotSelected(
-    editor: Editor,
+    ed: Editor,
     matches: RegExpMatchArray[],
     fromOffset: number,
     mode: Mode
@@ -302,8 +284,8 @@ export default class ACPlugin extends Plugin {
       return (
         matches.find((m) => m.index > fromOffset) ??
         matches.find((m) => {
-          const sel = this.matchToSel(editor, m);
-          return m.index < fromOffset && !this.isSelected(editor, sel);
+          const sel = this.matchToSel(ed, m);
+          return m.index < fromOffset && !this.isSelected(ed, sel);
         })
       );
     } else if (mode === "Prev") {
@@ -312,25 +294,19 @@ export default class ACPlugin extends Plugin {
         matches.filter((m) => m.index < fromOffset).last() ??
         matches
           .filter((m) => {
-            const sel = this.matchToSel(editor, m);
-            return m.index > fromOffset && !this.isSelected(editor, sel);
+            const sel = this.matchToSel(ed, m);
+            return m.index > fromOffset && !this.isSelected(ed, sel);
           })
           .last()
       );
     }
   }
 
-  selectInstance(
-    editor: Editor,
-    appendQ = false,
-    mode: Mode,
-    existingQ?: Query
-  ) {
-    // const {setSelection, getValue, somethingSelected, posToOffset, getCursor, listSelections, scrollIntoView} = editor
-    let { toSelect, wordA, wordH } = this.getToSelect(editor);
+  selectInstance(ed: Editor, appendQ = false, mode: Mode, existingQ?: Query) {
+    let { toSelect, wordA, wordH } = this.getToSelect(ed);
     // Set words under cursor
-    if (!editor.somethingSelected() && !existingQ) {
-      editor.setSelection(wordA, wordH);
+    if (!ed.somethingSelected() && !existingQ) {
+      ed.setSelection(wordA, wordH);
       return;
     }
 
@@ -339,45 +315,45 @@ export default class ACPlugin extends Plugin {
       q = { name: "", query: toSelect, flags: "", regexQ: false };
     }
 
-    let content = editor.getValue();
+    let content = ed.getValue();
     const regex = createRegex(q);
     let matches = [...content.matchAll(regex)];
 
     const nextSels: EditorSelection[] = [];
     if (mode === "All") {
       let offset = 0;
-      if (editor.somethingSelected()) {
-        offset = editor.posToOffset(editor.getCursor("from"));
-        content = editor.getSelection();
+      if (ed.somethingSelected()) {
+        offset = ed.posToOffset(ed.getCursor("from"));
+        content = ed.getSelection();
         matches = [...content.matchAll(regex)];
       }
       matches.forEach((m) => {
-        nextSels.push(this.matchToSel(editor, m, offset));
+        nextSels.push(this.matchToSel(ed, m, offset));
       });
-      this.setSels(appendQ, editor, ...nextSels);
+      this.setSels(appendQ, ed, ...nextSels);
       new Notice(`${matches.length} matches found.`);
       return;
     }
 
     let nextFromOffset;
-    let latestSel = editor.listSelections().last();
+    let latestSel = ed.listSelections().last();
     if (mode === "Prev") {
-      latestSel = editor.listSelections().first();
+      latestSel = ed.listSelections().first();
     }
     const lastPos = latestSel[mode === "Next" ? "head" : "anchor"];
-    const fromOffset = editor.posToOffset(lastPos);
+    const fromOffset = ed.posToOffset(lastPos);
 
-    let match = this.nextNotSelected(editor, matches, fromOffset, mode);
+    let match = this.nextNotSelected(ed, matches, fromOffset, mode);
     nextFromOffset = match?.index;
     toSelect = match?.[0] ?? toSelect;
 
     if (nextFromOffset !== undefined) {
-      const nextSel: EditorSelection = this.matchToSel(editor, match);
+      const nextSel: EditorSelection = this.matchToSel(ed, match);
       nextSels.push(nextSel);
 
-      this.setSels(appendQ, editor, ...nextSels);
+      this.setSels(appendQ, ed, ...nextSels);
 
-      editor.scrollIntoView({
+      ed.scrollIntoView({
         from: nextSel.anchor,
         to: nextSel.head,
       });

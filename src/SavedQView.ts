@@ -54,18 +54,18 @@ export default class SavedQView extends ItemView {
       qDiv.addEventListener("contextmenu", () => {
         const view = workspace.getActiveViewOfType(MarkdownView);
         if (view) {
-          const { editor } = view;
-          plugin.selectInstance(editor, false, "All", q);
-          editor.focus();
+          const { editor: ed } = view;
+          plugin.selectInstance(ed, false, "All", q);
+          ed.focus();
         }
       });
 
       qDiv.addEventListener("click", () => {
         const view = workspace.getActiveViewOfType(MarkdownView);
         if (view) {
-          const { editor } = view;
-          plugin.selectInstance(editor, false, "Next", q);
-          editor.focus();
+          const { editor: ed } = view;
+          plugin.selectInstance(ed, false, "Next", q);
+          ed.focus();
         }
       });
     });
