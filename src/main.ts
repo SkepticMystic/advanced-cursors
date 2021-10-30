@@ -213,10 +213,23 @@ export default class ACPlugin extends Plugin {
 
     // Set new
     newSels.forEach((newSel) => {
-      doc.markText(newSel.anchor, newSel.head, {
-        className: "AC-flashNewSel",
-      });
+      if (this.anchorAheadOfHead(editor, newSel)) {
+        doc.markText(newSel.head, newSel.anchor, {
+          className: "AC-flashNewSel",
+        });
+      } else {
+        doc.markText(newSel.anchor, newSel.head, {
+          className: "AC-flashNewSel",
+        });
+      }
     });
+  }
+
+  anchorAheadOfHead(
+    editor: Editor,
+    sel: EditorSelection | EditorSelectionOrCaret
+  ) {
+    return editor.posToOffset(sel.anchor) > editor.posToOffset(sel.head);
   }
 
   getToSelect(editor: Editor): {
@@ -254,7 +267,7 @@ export default class ACPlugin extends Plugin {
       } else {
         throw new Error("Cannot determine if cm5 or cm6");
       }
-      if (editor.posToOffset(wordA) > editor.posToOffset(wordH)) {
+      if (this.anchorAheadOfHead(editor, { anchor: wordA, head: wordH })) {
         return { toSelect, wordA: wordH, wordH: wordA };
       }
       return { toSelect, wordA, wordH };
