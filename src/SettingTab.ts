@@ -54,17 +54,7 @@ export class ACSettingTab extends PluginSettingTab {
   };
 
   editSavedQ(i: number) {
-    const { settings } = this.plugin;
-    const existingQ = settings.savedQueries[i];
-
-    new AddQModal(
-      this.app,
-      this.plugin,
-      this,
-      this.savedQsDiv,
-      existingQ,
-      i
-    ).open();
+    new AddQModal(this.app, this.plugin, this, this.savedQsDiv, i).open();
   }
 
   removeSavedQ = async (i: number) => {
@@ -92,7 +82,6 @@ export class ACSettingTab extends PluginSettingTab {
 
   async display(): Promise<void> {
     let { containerEl } = this;
-    const { settings } = this.plugin;
     containerEl.empty();
 
     containerEl.createEl("h2", { text: "Advanced Cursors Settings" });
@@ -101,14 +90,7 @@ export class ACSettingTab extends PluginSettingTab {
 
     containerEl.createEl("button", { text: "Add Query" }, (but) => {
       but.addEventListener("click", () => {
-        new AddQModal(
-          this.app,
-          this.plugin,
-          this,
-          this.savedQsDiv,
-          { name: "", query: "", flags: "", regexQ: true },
-          -1
-        ).open();
+        new AddQModal(this.app, this.plugin, this, this.savedQsDiv, -1).open();
       });
     });
     this.savedQsDiv = containerEl.createDiv({ cls: "savedQs" });
@@ -130,7 +112,6 @@ export class AddQModal extends Modal {
   plugin: ACPlugin;
   settingsTab: ACSettingTab;
   savedQsDiv: HTMLDivElement;
-  existingQ: Query;
   i: number;
 
   constructor(
@@ -138,14 +119,12 @@ export class AddQModal extends Modal {
     plugin: ACPlugin,
     settingsTab: ACSettingTab,
     savedQsDiv: HTMLDivElement,
-    existingQ: Query,
     i: number
   ) {
     super(app);
     this.plugin = plugin;
     this.settingsTab = settingsTab;
     this.savedQsDiv = savedQsDiv;
-    this.existingQ = existingQ;
     this.i = i;
   }
 
@@ -159,7 +138,6 @@ export class AddQModal extends Modal {
         plugin: this.plugin,
         modal: this,
         settingsTab: this.settingsTab,
-        existingQ: this.existingQ,
         i: this.i,
       },
     });

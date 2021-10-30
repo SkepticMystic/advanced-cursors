@@ -10,8 +10,12 @@
   export let plugin: ACPlugin;
   export let modal: AddQModal;
   export let settingsTab: ACSettingTab;
-  export let existingQ: Query;
   export let i: number;
+
+  let existingQ: Query = { name: "", query: "", flags: "", regexQ: true };
+  if (i > -1) {
+    existingQ = plugin.settings.savedQueries[i];
+  }
 
   let nameEl: HTMLInputElement;
   let queryEl: HTMLInputElement;
@@ -20,7 +24,7 @@
 
   onMount(() => nameEl.focus());
 
-  async function onClick(i: number) {
+  async function submitOrEdit(i: number) {
     const name = nameEl.value;
     const query = queryEl.value;
     const { savedQueries } = plugin.settings;
@@ -39,12 +43,7 @@
       // Add new query to settings
       const regexQ = regexEl.checked;
       const flags = flagsEl.value;
-      const newQ = {
-        name,
-        query,
-        regexQ,
-        flags,
-      };
+      const newQ = { name, query, regexQ, flags };
 
       if (i > -1) {
         // Remove old command
@@ -103,7 +102,7 @@
   <label for="regexQ">Regex</label>
 </div>
 <div>
-  <button class="AC-submit-button" on:click={() => onClick(i)}
+  <button class="AC-submit-button" on:click={() => submitOrEdit(i)}
     >{i === -1 ? "Submit" : "Edit"}</button
   >
 </div>

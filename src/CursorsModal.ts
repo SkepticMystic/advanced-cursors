@@ -75,7 +75,7 @@ export class CursorsModal extends Modal {
 
     new QueryModal({
       target: contentEl,
-      props: { modal: this, plugin: this.plugin },
+      props: { modal: this, plugin: this.plugin, editor: this.editor },
     });
   }
 
