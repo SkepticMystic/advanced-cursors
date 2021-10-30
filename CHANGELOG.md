@@ -1,4 +1,11 @@
 ## Advanced Cursors Changelog
+### [0.3.1](https://github.com/SkepticMystic/advanced-cursors/compare/0.3.0...0.3.1) (2021-10-30)
+
+
+### Bug Fixes
+
+* :bug: scrollNicely, but for real this time ([0a5862d](https://github.com/SkepticMystic/advanced-cursors/commit/0a5862d8acd7ffff43850271acfafe2488a1a839))
+
 ## [0.3.0](https://github.com/SkepticMystic/advanced-cursors/compare/0.2.3...0.3.0) (2021-10-30)
 
 
