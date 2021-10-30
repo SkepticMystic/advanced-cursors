@@ -1,4 +1,16 @@
 ## Advanced Cursors Changelog
+## [0.3.0](https://github.com/SkepticMystic/advanced-cursors/compare/0.2.3...0.3.0) (2021-10-30)
+
+
+### Features
+
+* :sparkles: Next & Prev buttons on cursorModal ([8303c0a](https://github.com/SkepticMystic/advanced-cursors/commit/8303c0a626ed3910fcfa2671ccaa619d60975f97))
+
+
+### Bug Fixes
+
+* :bug: Less jarring scroll on copyLineUpOrDown ([bb6e210](https://github.com/SkepticMystic/advanced-cursors/commit/bb6e2106b7e78236be5358b5383e48faff0a2c2e))
+
 ### [0.2.3](https://github.com/SkepticMystic/advanced-cursors/compare/0.2.2...0.2.3) (2021-10-30)
 
 
