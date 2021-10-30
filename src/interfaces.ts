@@ -9,6 +9,7 @@ export interface ACSettings {
   savedQueries: Query[];
   savedQViewSide: "left" | "right";
   lastQ: Query;
+  openViewOnload: boolean;
 }
 
 export type Mode = "All" | "Next" | "Prev";

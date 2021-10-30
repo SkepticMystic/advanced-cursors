@@ -89,6 +89,19 @@ export default class ACPlugin extends Plugin {
       },
     });
     // !SECTION Copy Lines
+
+    this.addCommand({
+      id: "open-savedQ-view",
+      name: "Open Saved Query View",
+      callback: async () => {
+        await openView(
+          this.app,
+          VIEW_TYPE_AC,
+          SavedQView,
+          this.settings.savedQViewSide
+        );
+      },
+    });
     // !SECTION Commands
 
     this.registerView(
@@ -96,12 +109,14 @@ export default class ACPlugin extends Plugin {
       (leaf: WorkspaceLeaf) => (this.view = new SavedQView(leaf, this))
     );
     this.app.workspace.onLayoutReady(async () => {
-      await openView(
-        this.app,
-        VIEW_TYPE_AC,
-        SavedQView,
-        this.settings.savedQViewSide
-      );
+      if (this.settings.openViewOnload) {
+        await openView(
+          this.app,
+          VIEW_TYPE_AC,
+          SavedQView,
+          this.settings.savedQViewSide
+        );
+      }
     });
 
     this.addSettingTab(new ACSettingTab(this.app, this));

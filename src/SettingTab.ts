@@ -1,4 +1,4 @@
-import { App, Modal, Notice, PluginSettingTab } from "obsidian";
+import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
 import { addChangelogButton } from "obsidian-community-lib";
 import type ACPlugin from "src/main";
 import { displayQ, removeQCmds } from "src/utils";
@@ -80,7 +80,7 @@ export class ACSettingTab extends PluginSettingTab {
   };
 
   async display(): Promise<void> {
-    let { containerEl } = this;
+    let { containerEl, plugin } = this;
     containerEl.empty();
 
     containerEl.createEl("h2", { text: "Advanced Cursors Settings" });
@@ -89,18 +89,30 @@ export class ACSettingTab extends PluginSettingTab {
 
     containerEl.createEl("button", { text: "Add Query" }, (but) => {
       but.addEventListener("click", () => {
-        new AddQModal(this.app, this.plugin, this, this.savedQsDiv, -1).open();
+        new AddQModal(this.app, plugin, this, this.savedQsDiv, -1).open();
       });
     });
     this.savedQsDiv = containerEl.createDiv({ cls: "savedQs" });
     this.initExistingSavedQs(this.savedQsDiv);
+
+    containerEl.createEl("hr");
+    new Setting(containerEl)
+      .setName("Open Saved Query View on Load")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(plugin.settings.openViewOnload)
+          .onChange(async (value) => {
+            plugin.settings.openViewOnload = value;
+            await plugin.saveSettings();
+          });
+      });
 
     // SECTION Changelog
 
     containerEl.createEl("hr");
     addChangelogButton(
       this.app,
-      this.plugin,
+      plugin,
       containerEl,
       "https://raw.githubusercontent.com/SkepticMystic/advanced-cursors/master/CHANGELOG.md"
     );
