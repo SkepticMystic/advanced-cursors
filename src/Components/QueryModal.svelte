@@ -63,24 +63,18 @@
 <div class="savedQs">
   <ol>
     {#each plugin.settings.savedQueries as q}
-      <li class="savedQ">
-        <span
-          class="savedQ-name"
-          on:click={() => {
-            plugin.selectInstance(editor, false, "All", q);
-            modal.close();
-          }}
-        >
+      <li
+        class="savedQ"
+        on:click={() => {
+          plugin.selectInstance(editor, false, "All", q);
+          modal.close();
+        }}
+      >
+        <span class="savedQ-name">
           {q.name}
         </span>
         <span>→</span>
-        <span
-          class="savedQ-query"
-          on:click={() => {
-            plugin.selectInstance(editor, false, "All", q);
-            modal.close();
-          }}
-        >
+        <span class="savedQ-query">
           {displayRegex(q)}
         </span>
       </li>
