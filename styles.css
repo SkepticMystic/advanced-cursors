@@ -38,3 +38,19 @@
   padding: 2px 4px;
   border-radius: 5px;
 }
+
+.AC-flashNewSel {
+  animation: flashNewSel 1.5s 1;
+}
+
+@keyframes flashNewSel {
+  0% {
+    background-color: transparent;
+  }
+  33% {
+    background-color: var(--text-highlight-bg);
+  }
+  100% {
+    background-color: transparent;
+  }
+}

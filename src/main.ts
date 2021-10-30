@@ -217,6 +217,20 @@ export default class ACPlugin extends Plugin {
       const reconSelections = this.reconstructSels([newSel]);
       editor.setSelections(reconSelections);
     }
+    this.clearOldSetNewMSpan(editor, newSel);
+  }
+
+  clearOldSetNewMSpan(editor: Editor, newSel: EditorSelectionOrCaret) {
+    // Clear old
+    const { lines } = editor.cm.getDoc().children[0];
+    lines.forEach((l) => {
+      l?.markedSpans?.forEach((mSpan) => mSpan.marker.clear());
+    });
+
+    // Set new
+    editor.cm.getDoc().markText(newSel.anchor, newSel.head, {
+      className: "AC-flashNewSel",
+    });
   }
 
   getToSelect(editor: Editor): {
