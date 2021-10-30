@@ -1,4 +1,11 @@
 ## Advanced Cursors Changelog
+### [0.2.1](https://github.com/SkepticMystic/advanced-cursors/compare/0.2.0...0.2.1) (2021-10-30)
+
+
+### Features
+
+* :sparkles: Flash latest selection as pseudo-`obsidian-search-match-highlight` ([0cdf897](https://github.com/SkepticMystic/advanced-cursors/commit/0cdf8977559a889a6372948915b5ad2d3d1db9c7))
+
 ## [0.2.0](https://github.com/SkepticMystic/advanced-cursors/compare/0.1.3...0.2.0) (2021-10-29)
 
 
