@@ -183,30 +183,39 @@ export default class ACPlugin extends Plugin {
     return newSelections;
   }
 
-  setSels(appendQ: boolean, editor: Editor, newSel: EditorSelectionOrCaret) {
+  setSels(
+    appendQ: boolean,
+    editor: Editor,
+    ...newSels: EditorSelectionOrCaret[]
+  ) {
     if (appendQ) {
       const currSelections: EditorSelectionOrCaret[] = editor.listSelections();
 
-      const reconSelections = this.reconstructSels([...currSelections, newSel]);
-      // reconSelections.push(newSel);
+      const reconSelections = this.reconstructSels([
+        ...currSelections,
+        ...newSels,
+      ]);
       editor.setSelections(reconSelections);
     } else {
-      const reconSelections = this.reconstructSels([newSel]);
+      const reconSelections = this.reconstructSels([...newSels]);
       editor.setSelections(reconSelections);
     }
-    this.clearOldSetNewMSpan(editor, newSel);
+    this.clearOldSetNewMSpan(editor, ...newSels);
   }
 
-  clearOldSetNewMSpan(editor: Editor, newSel: EditorSelectionOrCaret) {
+  clearOldSetNewMSpan(editor: Editor, ...newSels: EditorSelectionOrCaret[]) {
+    const doc = editor.cm.getDoc();
     // Clear old
-    const { lines } = editor.cm.getDoc().children[0];
+    const { lines } = doc.children[0];
     lines.forEach((l) => {
       l?.markedSpans?.forEach((mSpan) => mSpan.marker.clear());
     });
 
     // Set new
-    editor.cm.getDoc().markText(newSel.anchor, newSel.head, {
-      className: "AC-flashNewSel",
+    newSels.forEach((newSel) => {
+      doc.markText(newSel.anchor, newSel.head, {
+        className: "AC-flashNewSel",
+      });
     });
   }
 
