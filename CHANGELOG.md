@@ -1,4 +1,11 @@
 ## Advanced Cursors Changelog
+### [0.2.2](https://github.com/SkepticMystic/advanced-cursors/compare/0.2.1...0.2.2) (2021-10-30)
+
+
+### Bug Fixes
+
+* :bug: Fix flashNewSel ([6198050](https://github.com/SkepticMystic/advanced-cursors/commit/61980502bc1ca4a4bd31c7e6a8e07f44e7678de6))
+
 ### [0.2.1](https://github.com/SkepticMystic/advanced-cursors/compare/0.2.0...0.2.1) (2021-10-30)
 
 
