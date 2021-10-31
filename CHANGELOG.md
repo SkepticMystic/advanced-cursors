@@ -1,4 +1,11 @@
 ## Advanced Cursors Changelog
+### [0.3.5](https://github.com/SkepticMystic/advanced-cursors/compare/0.3.4...0.3.5) (2021-10-31)
+
+
+### Bug Fixes
+
+* :bug: Auto-release-notes broken ([45aaeef](https://github.com/SkepticMystic/advanced-cursors/commit/45aaeef4110997258d9fa1c1617fdced8a251518))
+
 ### [0.3.4](https://github.com/SkepticMystic/advanced-cursors/compare/0.3.3...0.3.4) (2021-10-31)
 
 
