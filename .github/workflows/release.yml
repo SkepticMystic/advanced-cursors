@@ -32,20 +32,3 @@ jobs:
           done
           zip -r "$PLUGIN_NAME".zip "$PLUGIN_NAME"
           hub release create "${assets[@]}" -a "$PLUGIN_NAME".zip -m "$TAG_NAME" "$TAG_NAME"
-changelog:
-  categories:
-    - title: Breaking Changes 🛠
-      labels:
-        - Semver-Major
-        - breaking-change
-    - title: Exciting New Features 🎉
-      labels:
-        - Semver-Minor
-        - enhancement
-        - feat
-    - title: Bug Fixes 🐛
-      labels:
-        - fix
-    - title: Other Changes
-      labels:
-        - "*"
