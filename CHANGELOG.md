@@ -1,4 +1,16 @@
 ## Advanced Cursors Changelog
+## [0.4.0](https://github.com/SkepticMystic/advanced-cursors/compare/0.3.5...0.4.0) (2021-10-31)
+
+
+### Features
+
+* :sparkles: Function: Insert incrementing `i` at each cursor ([a84478e](https://github.com/SkepticMystic/advanced-cursors/commit/a84478e490800dbe2cf6dfe85cc826a274b5edc1))
+
+
+### Documentation
+
+* :memo: Update readme with new incrementing i function ([b29830d](https://github.com/SkepticMystic/advanced-cursors/commit/b29830d73f8fe819de0ca778898b2576ec65e432))
+
 ### [0.3.5](https://github.com/SkepticMystic/advanced-cursors/compare/0.3.4...0.3.5) (2021-10-31)
 
 
