@@ -31,6 +31,20 @@ Same as [Move to next instance of current selection](https://github.com/SkepticM
 
 Same as [Add next instance of current selection to selections](https://github.com/SkepticMystic/advanced-cursors/blob/master/README.md#Add-next-instance-of-current-selection-to-selections), except going backwards.
 
+### Copy Line Up/Down
+
+This command copies the currently selected lines up or down depending on which option you choose.
+
+Like `Alt + Shift + ↑/↓` in VS Code.
+
+### Inserting incrementing value at eachc ursor
+
+Running this command opens a modal which lets you choose a `start` number, and an increment `inc`. On submitting, Advanced Cursors will **overwrite** each of your current selections with an incrementing value starting from `start` and incrementing by `inc` each cursor.
+
+Both `start` and `inc` can be arbitray real numbers. The resulting number will be rounded to 4 decimals.
+
+![](Assets/AC-IncrementingI.gif)
+
 ### Open Regex match modal
 
 This command allows even more fine-grained control of where you place the cursor.
