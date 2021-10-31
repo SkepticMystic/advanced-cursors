@@ -9,9 +9,10 @@ import {
   WorkspaceLeaf,
 } from "obsidian";
 import { openView, saveViewSide } from "obsidian-community-lib";
+import { IncrementingIModal } from "src/IncrementingIModal";
 import type { ACSettings as ACSettings, Mode, Query } from "src/interfaces";
 import SavedQView from "src/SavedQView";
-import { cmdId, cmdName, createRegex } from "src/utils";
+import { cmdId, cmdName, createRegex, roundNumber } from "src/utils";
 import { DEFAULT_SETTINGS, MODES, VIEW_TYPE_AC } from "./const";
 import { CursorsModal } from "./CursorsModal";
 import { ACSettingTab } from "./SettingTab";
@@ -91,6 +92,14 @@ export default class ACPlugin extends Plugin {
     // !SECTION Copy Lines
 
     this.addCommand({
+      id: "write-incrementing-i",
+      name: "Insert an incrementing value at each cursor",
+      editorCallback: (ed: Editor) => {
+        new IncrementingIModal(this.app, this, ed).open();
+      },
+    });
+
+    this.addCommand({
       id: "open-savedQ-view",
       name: "Open Saved Query View",
       callback: async () => {
@@ -102,6 +111,7 @@ export default class ACPlugin extends Plugin {
         );
       },
     });
+
     // !SECTION Commands
 
     this.registerView(
@@ -378,6 +388,18 @@ export default class ACPlugin extends Plugin {
         `No instance of '${toSelect}' found anywhere in note (that isn't already selected).`
       );
     }
+  }
+
+  writeIncrementingI(ed: Editor, start: number, inc: number) {
+    const sels = ed.listSelections();
+    sels.forEach((sel, n) => {
+      const i = roundNumber(start + n * inc).toString();
+      if (!this.anchorAheadOfHead(ed, sel)) {
+        ed.replaceRange(i, sel.anchor, sel.head);
+      } else {
+        ed.replaceRange(i, sel.head, sel.anchor);
+      }
+    });
   }
 
   async onunload() {

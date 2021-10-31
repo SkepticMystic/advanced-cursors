@@ -10,3 +10,5 @@ export const DEFAULT_SETTINGS: ACSettings = {
 export const VIEW_TYPE_AC = "Saved Queries View";
 
 export const MODES: Mode[] = ["All", "Next", "Prev"];
+
+export const DECIMALS = 4;

@@ -1,5 +1,5 @@
 import type { App } from "obsidian";
-import { MODES } from "src/const";
+import { DECIMALS, MODES } from "src/const";
 import type { Mode, Query } from "src/interfaces";
 
 export const cmdId = (q: Query, mode: Mode) =>
@@ -33,3 +33,7 @@ export const displayRegex = (q: Query) => {
 export const displayQ = (q: Query) => {
   return `${q.name} → ${displayRegex(q)}`;
 };
+
+export function roundNumber(num: number, dec: number = DECIMALS): number {
+  return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
+}
