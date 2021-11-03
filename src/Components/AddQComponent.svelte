@@ -61,7 +61,7 @@
       settingsTab.initExistingSavedQs(modal.savedQsDiv);
 
       //   Add new plugin command
-      MODES.forEach((mode) => this.addCmd(newQ, mode));
+      MODES.forEach((mode) => plugin.addCmd(newQ, mode));
 
       plugin.view.draw();
       modal.close();
