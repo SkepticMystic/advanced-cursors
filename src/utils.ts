@@ -37,3 +37,7 @@ export const displayQ = (q: Query) => {
 export function roundNumber(num: number, dec: number = DECIMALS): number {
   return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
 }
+
+export const blankQ = (query: string = "", regexQ: boolean = true): Query => {
+  return { name: "", query, flags: "", regexQ };
+};

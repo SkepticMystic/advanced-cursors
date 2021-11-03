@@ -29,7 +29,7 @@ export class ACSettingTab extends PluginSettingTab {
           text: "❌",
           cls: "deleteQButton",
         },
-        (but: HTMLButtonElement) => {
+        (but) => {
           but.addEventListener("click", async () => {
             savedQLi.remove();
             await this.removeSavedQ(i);
@@ -43,7 +43,7 @@ export class ACSettingTab extends PluginSettingTab {
           text: "✏️",
           cls: "editQButton",
         },
-        (but: HTMLButtonElement) => {
+        (but) => {
           but.addEventListener("click", () => {
             this.editSavedQ(i);
           });
@@ -109,7 +109,6 @@ export class ACSettingTab extends PluginSettingTab {
 
     // SECTION Changelog
 
-    containerEl.createEl("hr");
     addRenderedMarkdownButton(
       this.app,
       plugin,

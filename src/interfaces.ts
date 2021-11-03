@@ -1,3 +1,5 @@
+import type { MODES } from "src/const";
+
 export interface Query {
   name: string;
   query: string;
@@ -12,7 +14,8 @@ export interface ACSettings {
   openViewOnload: boolean;
 }
 
-export type Mode = "All" | "Next" | "Prev";
+export type Mode = typeof MODES[number];
+
 declare module "obsidian" {
   interface App {
     commands: {

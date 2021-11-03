@@ -1,10 +1,9 @@
 <script lang="ts">
   import { App, Notice } from "obsidian";
   import { MODES } from "src/const";
-  import type { Query } from "src/interfaces";
   import type ACPlugin from "src/main";
   import type { ACSettingTab, AddQModal } from "src/SettingTab";
-  import { removeQCmds } from "src/utils";
+  import { blankQ, removeQCmds } from "src/utils";
   import { onMount } from "svelte";
 
   export let app: App;
@@ -13,7 +12,7 @@
   export let settingsTab: ACSettingTab;
   export let i: number;
 
-  let existingQ: Query = { name: "", query: "", flags: "", regexQ: true };
+  let existingQ = blankQ();
   if (i > -1) {
     existingQ = plugin.settings.savedQueries[i];
   }
@@ -57,10 +56,8 @@
       }
       await plugin.saveSettings();
 
-      //   Refresh settings tab
       settingsTab.initExistingSavedQs(modal.savedQsDiv);
 
-      //   Add new plugin command
       MODES.forEach((mode) => plugin.addCmd(newQ, mode));
 
       plugin.view.draw();

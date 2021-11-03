@@ -1,4 +1,4 @@
-import type { ACSettings, Mode } from "src/interfaces";
+import type { ACSettings } from "src/interfaces";
 
 export const DEFAULT_SETTINGS: ACSettings = {
   savedQueries: [],
@@ -9,6 +9,6 @@ export const DEFAULT_SETTINGS: ACSettings = {
 
 export const VIEW_TYPE_AC = "Saved Queries View";
 
-export const MODES: Mode[] = ["All", "Next", "Prev"];
+export const MODES = ["All", "Next", "Prev"] as const;
 
 export const DECIMALS = 4;

@@ -12,7 +12,7 @@ import { openView, saveViewSide } from "obsidian-community-lib";
 import { IncrementingIModal } from "src/IncrementingIModal";
 import type { ACSettings as ACSettings, Mode, Query } from "src/interfaces";
 import SavedQView from "src/SavedQView";
-import { cmdId, cmdName, createRegex, roundNumber } from "src/utils";
+import { blankQ, cmdId, cmdName, createRegex, roundNumber } from "src/utils";
 import { DEFAULT_SETTINGS, MODES, VIEW_TYPE_AC } from "./const";
 import { CursorsModal } from "./CursorsModal";
 import { ACSettingTab } from "./SettingTab";
@@ -184,7 +184,7 @@ export default class ACPlugin extends Plugin {
     this.scrollNicely(ed, { anchor: cursorFrom, head: cursorTo });
   }
 
-  matchToSel(ed: Editor, match: RegExpMatchArray, offset = 0) {
+  matchToSel(ed: Editor, match: RegExpMatchArray, offset = 0): EditorSelection {
     const fromOff = match.index + offset;
     const toOff = fromOff + match[0].length;
 
@@ -291,8 +291,10 @@ export default class ACPlugin extends Plugin {
   }
 
   isSelected(ed: Editor, selection: EditorSelection) {
-    const offA = ed.posToOffset(selection.anchor);
-    const offH = ed.posToOffset(selection.head);
+    const [offA, offH] = [
+      ed.posToOffset(selection.anchor),
+      ed.posToOffset(selection.head),
+    ];
     const matchingSels = ed
       .listSelections()
       .filter(
@@ -318,7 +320,6 @@ export default class ACPlugin extends Plugin {
         })
       );
     } else if (mode === "Prev") {
-      // This mode is not set up to handle the bug from #18 when adding next instance to sels
       return (
         matches.filter((m) => m.index < fromOffset).last() ??
         matches
@@ -339,49 +340,40 @@ export default class ACPlugin extends Plugin {
       return;
     }
 
-    let q = existingQ;
-    if (!existingQ) {
-      q = { name: "", query: toSelect, flags: "", regexQ: false };
-    }
+    let q = existingQ ?? blankQ(toSelect, false);
 
     let content = ed.getValue();
     const regex = createRegex(q);
     let matches = [...content.matchAll(regex)];
 
-    const nextSels: EditorSelection[] = [];
     if (mode === "All") {
       let offset = 0;
       if (ed.somethingSelected()) {
         offset = ed.posToOffset(ed.getCursor("from"));
-        content = ed.getSelection();
-        matches = [...content.matchAll(regex)];
+        const currSel = ed.getSelection();
+        matches = [...currSel.matchAll(regex)];
       }
-      matches.forEach((m) => {
-        nextSels.push(this.matchToSel(ed, m, offset));
-      });
+      const nextSels = matches.map((m) => this.matchToSel(ed, m, offset));
       this.setSels(appendQ, ed, ...nextSels);
       new Notice(`${matches.length} matches found.`);
       return;
     }
 
-    let nextFromOffset;
-    let latestSel = ed.listSelections().last();
-    if (mode === "Prev") {
-      latestSel = ed.listSelections().first();
-    }
+    let latestSel =
+      mode === "Next"
+        ? ed.listSelections().last()
+        : ed.listSelections().first();
+
     const lastPos = latestSel[mode === "Next" ? "head" : "anchor"];
     const fromOffset = ed.posToOffset(lastPos);
 
-    let match = this.nextNotSelected(ed, matches, fromOffset, mode);
-    nextFromOffset = match?.index;
+    const match = this.nextNotSelected(ed, matches, fromOffset, mode);
+    const nextFromOffset = match?.index;
     toSelect = match?.[0] ?? toSelect;
 
     if (nextFromOffset !== undefined) {
-      const nextSel: EditorSelection = this.matchToSel(ed, match);
-      nextSels.push(nextSel);
-
-      this.setSels(appendQ, ed, ...nextSels);
-
+      const nextSel = this.matchToSel(ed, match);
+      this.setSels(appendQ, ed, nextSel);
       this.scrollNicely(ed, nextSel);
     } else {
       new Notice(
