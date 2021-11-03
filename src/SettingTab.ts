@@ -1,5 +1,5 @@
 import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
-import { addChangelogButton } from "obsidian-community-lib";
+import { addRenderedMarkdownButton } from "obsidian-community-lib";
 import type ACPlugin from "src/main";
 import { displayQ, removeQCmds } from "src/utils";
 import AddQComponent from "./Components/AddQComponent.svelte";
@@ -110,11 +110,21 @@ export class ACSettingTab extends PluginSettingTab {
     // SECTION Changelog
 
     containerEl.createEl("hr");
-    addChangelogButton(
+    addRenderedMarkdownButton(
       this.app,
       plugin,
       containerEl,
-      "https://raw.githubusercontent.com/SkepticMystic/advanced-cursors/master/CHANGELOG.md"
+      "https://raw.githubusercontent.com/SkepticMystic/advanced-cursors/master/CHANGELOG.md",
+      true,
+      "Changelog"
+    );
+    addRenderedMarkdownButton(
+      this.app,
+      plugin,
+      containerEl,
+      "https://raw.githubusercontent.com/SkepticMystic/advanced-cursors/master/README.md",
+      true,
+      "Readme"
     );
   }
 }
