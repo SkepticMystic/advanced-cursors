@@ -1,4 +1,17 @@
 ## Advanced Cursors Changelog
+### [0.4.1](https://github.com/SkepticMystic/advanced-cursors/compare/0.4.0...0.4.1) (2021-11-03)
+
+
+### Bug Fixes
+
+* :bug: Doesn't work on mobile, update manifest ([b970823](https://github.com/SkepticMystic/advanced-cursors/commit/b9708231acc8f744885248d167a49c8723f1f1d0))
+* :bug: Used this. in wrong context ([212b6fa](https://github.com/SkepticMystic/advanced-cursors/commit/212b6fa7e5e97ced28cf023806362ce2a6c89970))
+
+
+### Documentation
+
+* :memo: Readme button in settings ([254b86a](https://github.com/SkepticMystic/advanced-cursors/commit/254b86a7ca1455c39f37adfc27f8e8fb9b2af8fd))
+
 ## [0.4.0](https://github.com/SkepticMystic/advanced-cursors/compare/0.3.5...0.4.0) (2021-10-31)
 
 
