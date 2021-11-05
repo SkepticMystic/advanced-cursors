@@ -107,6 +107,20 @@ export class ACSettingTab extends PluginSettingTab {
           });
       });
 
+    new Setting(containerEl)
+      .setName("Show Command Notifications")
+      .setDesc(
+        "If off, disables all notifications that are not caused by errors or changing settings."
+      )
+      .addToggle((toggle) => {
+        toggle
+          .setValue(plugin.settings.showFunctionNotifications)
+          .onChange(async (value) => {
+            plugin.settings.showFunctionNotifications = value;
+            await plugin.saveSettings();
+          });
+      });
+
     // SECTION Changelog
 
     addRenderedMarkdownButton(

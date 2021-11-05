@@ -355,7 +355,8 @@ export default class ACPlugin extends Plugin {
       }
       const nextSels = matches.map((m) => this.matchToSel(ed, m, offset));
       this.setSels(appendQ, ed, ...nextSels);
-      new Notice(`${matches.length} matches found.`);
+      this.settings.showFunctionNotifications &&
+        new Notice(`${matches.length} matches found.`);
       return;
     }
 
@@ -376,9 +377,10 @@ export default class ACPlugin extends Plugin {
       this.setSels(appendQ, ed, nextSel);
       this.scrollNicely(ed, nextSel);
     } else {
-      new Notice(
-        `No instance of '${toSelect}' found anywhere in note (that isn't already selected).`
-      );
+      this.settings.showFunctionNotifications &&
+        new Notice(
+          `No instance of '${toSelect}' found anywhere in note (that isn't already selected).`
+        );
     }
   }
 

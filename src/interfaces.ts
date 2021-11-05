@@ -12,6 +12,7 @@ export interface ACSettings {
   savedQViewSide: "left" | "right";
   lastQ: Query;
   openViewOnload: boolean;
+  showFunctionNotifications: boolean;
 }
 
 export type Mode = typeof MODES[number];
