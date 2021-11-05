@@ -1,7 +1,7 @@
 {
 	"id": "advanced-cursors",
 	"name": "Advanced Cursors",
-	"version": "0.4.2",
+	"version": "0.4.3",
 	"minAppVersion": "0.12.18",
 	"description": "Use multiple cursors even more powerfully.",
 	"author": "SkepticMystic",

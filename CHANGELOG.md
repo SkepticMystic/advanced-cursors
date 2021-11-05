@@ -1,4 +1,11 @@
 ## Advanced Cursors Changelog
+### [0.4.3](https://github.com/SkepticMystic/advanced-cursors/compare/0.4.2...0.4.3) (2021-11-05)
+
+
+### Features
+
+* :sparkles: Option to disable notifications trigger by commands ([#25](https://github.com/SkepticMystic/advanced-cursors/issues/25)) ([44de09c](https://github.com/SkepticMystic/advanced-cursors/commit/44de09c3747c30fec75734cff1872e8f651cd531))
+
 ### [0.4.2](https://github.com/SkepticMystic/advanced-cursors/compare/0.4.1...0.4.2) (2021-11-03)
 
 ### [0.4.1](https://github.com/SkepticMystic/advanced-cursors/compare/0.4.0...0.4.1) (2021-11-03)
