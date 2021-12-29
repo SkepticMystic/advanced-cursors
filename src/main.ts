@@ -198,7 +198,8 @@ export default class ACPlugin extends Plugin {
 
   reconstructSels(sels: EditorSelectionOrCaret[]) {
     return sels.map((sel) => {
-      return { anchor: sel.anchor, head: sel.head };
+      const { anchor, head } = sel;
+      return { anchor, head };
     });
   }
 
@@ -215,7 +216,7 @@ export default class ACPlugin extends Plugin {
       const reconSelections = this.reconstructSels([...newSels]);
       ed.setSelections(reconSelections);
     }
-    this.clearOldSetNewMSpan(ed, ...newSels);
+    // this.clearOldSetNewMSpan(ed, ...newSels);
   }
 
   clearOldSetNewMSpan(ed: Editor, ...newSels: EditorSelectionOrCaret[]) {
@@ -272,11 +273,11 @@ export default class ACPlugin extends Plugin {
         const wordRange = ed.cm.findWordAt(cursor);
         [wordA, wordH] = [wordRange.anchor, wordRange.head];
         toSelect = ed.getRange(wordA, wordH);
-      } else if (ed.cm?.state.wordAt) {
-        const { fromOffset, toOffset } = ed.cm.state.wordAt(
+      } else if (ed.cm?.viewState.state.wordAt) {
+        const { from, to } = ed.cm?.viewState.state.wordAt(
           ed.posToOffset(cursor)
         );
-        [wordA, wordH] = [ed.offsetToPos(fromOffset), ed.offsetToPos(toOffset)];
+        [wordA, wordH] = [ed.offsetToPos(from), ed.offsetToPos(to)];
         toSelect = ed.getRange(wordA, wordH);
       } else {
         throw new Error("Cannot determine if cm5 or cm6");

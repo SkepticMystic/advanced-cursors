@@ -27,8 +27,10 @@ declare module "obsidian" {
   interface Editor {
     cm: {
       findWordAt: (pos: EditorPosition) => EditorSelection | null;
-      state: {
-        wordAt: (offset: number) => { fromOffset: number; toOffset: number };
+      viewState: {
+        state: {
+          wordAt: (offset: number) => { from: number; to: number };
+        };
       };
       getDoc: () => Doc;
       getScrollInfo: () => { top: number; left: number; clientHeight: number };
