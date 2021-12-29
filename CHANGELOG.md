@@ -1,4 +1,11 @@
 ## Advanced Cursors Changelog
+### [0.4.4](https://github.com/SkepticMystic/advanced-cursors/compare/0.4.3...0.4.4) (2021-12-29)
+
+
+### Bug Fixes
+
+* :bug: Fix for CM6 ([cb4b21f](https://github.com/SkepticMystic/advanced-cursors/commit/cb4b21fc7afbb061d9d8c561680d70b57e51b914))
+
 ### [0.4.3](https://github.com/SkepticMystic/advanced-cursors/compare/0.4.2...0.4.3) (2021-11-05)
 
 
