@@ -1,4 +1,11 @@
 ## Advanced Cursors Changelog
+### [0.4.5](https://github.com/SkepticMystic/advanced-cursors/compare/0.4.4...0.4.5) (2022-01-02)
+
+
+### Features
+
+* :sparkles: Add a cursor on the line above/below (fix [#29](https://github.com/SkepticMystic/advanced-cursors/issues/29)) ([6164871](https://github.com/SkepticMystic/advanced-cursors/commit/6164871b60a295f915ddfe7e6ba87272294e9953))
+
 ### [0.4.4](https://github.com/SkepticMystic/advanced-cursors/compare/0.4.3...0.4.4) (2021-12-29)
 
 
