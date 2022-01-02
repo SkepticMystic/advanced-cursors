@@ -30,9 +30,7 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: "open-regex-match-modal",
       name: "Open Regex Match Modal",
-      editorCallback: (ed: Editor) => {
-        new CursorsModal(this.app, ed, this).open();
-      },
+      editorCallback: (ed) => new CursorsModal(this.app, ed, this).open(),
     });
 
     this.settings.savedQueries.forEach((q) => {
@@ -43,16 +41,12 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: "move-to-next-match",
       name: "Move to next instance of current selection",
-      editorCallback: (ed: Editor) => {
-        this.selectInstance(ed, false, "Next");
-      },
+      editorCallback: (ed) => this.selectInstance(ed, false, "Next"),
     });
     this.addCommand({
       id: "move-to-previous-match",
       name: "Move to previous instance of current selection",
-      editorCallback: (ed: Editor) => {
-        this.selectInstance(ed, false, "Prev");
-      },
+      editorCallback: (ed) => this.selectInstance(ed, false, "Prev"),
     });
     // !SECTION Move to MODE match
 
@@ -60,16 +54,12 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: "add-next-match-to-selections",
       name: "Add next instance of current selection to selections",
-      editorCallback: (ed: Editor) => {
-        this.selectInstance(ed, true, "Next");
-      },
+      editorCallback: (ed) => this.selectInstance(ed, true, "Next"),
     });
     this.addCommand({
       id: "add-prev-match-to-selections",
       name: "Add previous instance of current selection to selections",
-      editorCallback: (ed: Editor) => {
-        this.selectInstance(ed, true, "Prev");
-      },
+      editorCallback: (ed) => this.selectInstance(ed, true, "Prev"),
     });
     // !SECTION Add MODE match to selections
 
@@ -77,24 +67,19 @@ export default class ACPlugin extends Plugin {
     this.addCommand({
       id: "copy-line-up",
       name: "Copy Current Line Upwards",
-      editorCallback: (ed: Editor) => {
-        this.copyLineUorD(ed, "up");
-      },
+      editorCallback: (ed) => this.copyLineUorD(ed, "up"),
     });
-
     this.addCommand({
       id: "copy-line-down",
       name: "Copy Current Line Downwards",
-      editorCallback: (ed: Editor) => {
-        this.copyLineUorD(ed, "down");
-      },
+      editorCallback: (ed) => this.copyLineUorD(ed, "down"),
     });
     // !SECTION Copy Lines
 
     this.addCommand({
       id: "write-incrementing-i",
       name: "Insert an incrementing value at each cursor",
-      editorCallback: (ed: Editor) => {
+      editorCallback: (ed) => {
         new IncrementingIModal(this.app, this, ed).open();
       },
     });
