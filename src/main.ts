@@ -77,6 +77,17 @@ export default class ACPlugin extends Plugin {
     // !SECTION Copy Lines
 
     this.addCommand({
+      id: "add-cursor-above",
+      name: "Add a cursor on the line above",
+      editorCallback: (ed) => this.addCursorUpOrDown(ed, "up"),
+    });
+    this.addCommand({
+      id: "add-cursor-below",
+      name: "Add a cursor on the line below",
+      editorCallback: (ed) => this.addCursorUpOrDown(ed, "down"),
+    });
+
+    this.addCommand({
       id: "write-incrementing-i",
       name: "Insert an incrementing value at each cursor",
       editorCallback: (ed) => {
@@ -169,6 +180,21 @@ export default class ACPlugin extends Plugin {
     this.scrollNicely(ed, { anchor: cursorFrom, head: cursorTo });
   }
 
+  addCursorUpOrDown(ed: Editor, mode: "up" | "down") {
+    const sels: EditorSelectionOrCaret[] = ed.listSelections();
+    const { ch, line } = sels[mode === "up" ? "first" : "last"]().anchor;
+
+    const lineTo = line + (mode === "up" ? -1 : 1);
+    const chTo = Math.min(ch, ed.getLine(lineTo).length);
+
+    const anchor = {
+      line: lineTo,
+      ch: chTo,
+    };
+    sels.push({ anchor, head: anchor });
+    ed.setSelections(this.reconstructSels(sels));
+  }
+
   matchToSel(ed: Editor, match: RegExpMatchArray, offset = 0): EditorSelection {
     const fromOff = match.index + offset;
     const toOff = fromOff + match[0].length;
@@ -201,6 +227,7 @@ export default class ACPlugin extends Plugin {
       const reconSelections = this.reconstructSels([...newSels]);
       ed.setSelections(reconSelections);
     }
+    // FIX doesn't work with CM6, I have to create a mark decorator
     // this.clearOldSetNewMSpan(ed, ...newSels);
   }
 
