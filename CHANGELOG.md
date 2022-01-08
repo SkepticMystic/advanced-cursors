@@ -1,4 +1,11 @@
 ## Advanced Cursors Changelog
+### [0.5.1](https://github.com/SkepticMystic/advanced-cursors/compare/0.5.0...0.5.1) (2022-01-08)
+
+
+### Bug Fixes
+
+* :bug: Fail less often + work with CM6 in more cases ([738408d](https://github.com/SkepticMystic/advanced-cursors/commit/738408dadb84f136044acf1d3ddbb1fc9c1d907c))
+
 ## [0.5.0](https://github.com/SkepticMystic/advanced-cursors/compare/0.4.5...0.5.0) (2022-01-02)
 
 ### [0.4.5](https://github.com/SkepticMystic/advanced-cursors/compare/0.4.4...0.4.5) (2022-01-02)
