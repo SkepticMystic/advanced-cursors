@@ -267,30 +267,50 @@ export default class ACPlugin extends Plugin {
     wordA: EditorPosition | undefined;
     wordH: EditorPosition | undefined;
   } {
-    let toSelect, wordH: EditorPosition, wordA: EditorPosition;
+    let toSelect: string, wordH: EditorPosition, wordA: EditorPosition;
 
     const { anchor, head } = ed.listSelections().last();
     // If last selection has something selected
     if (!(anchor.line === head.line && anchor.ch === head.ch)) {
-      toSelect = ed.getRange(anchor, head);
-      if (ed.posToOffset(anchor) > ed.posToOffset(head)) {
-        toSelect = ed.getRange(head, anchor);
-      }
+      toSelect =
+        ed.posToOffset(anchor) < ed.posToOffset(head)
+          ? ed.getRange(anchor, head)
+          : ed.getRange(head, anchor);
       return { toSelect, wordA, wordH };
     }
 
     try {
       const cursor = ed.getCursor();
       if (ed.cm?.findWordAt) {
+        // CM5
         const wordRange = ed.cm.findWordAt(cursor);
         [wordA, wordH] = [wordRange.anchor, wordRange.head];
         toSelect = ed.getRange(wordA, wordH);
       } else if (ed.cm?.viewState.state.wordAt) {
-        const { from, to } = ed.cm?.viewState.state.wordAt(
-          ed.posToOffset(cursor)
-        );
-        [wordA, wordH] = [ed.offsetToPos(from), ed.offsetToPos(to)];
-        toSelect = ed.getRange(wordA, wordH);
+        // CM6
+        const cursorOff = ed.posToOffset(cursor);
+        const word = ed.cm.viewState.state.wordAt(cursorOff);
+        if (word !== null) {
+          const { from, to } = ed.cm?.viewState.state.wordAt(
+            ed.posToOffset(cursor)
+          );
+          [wordA, wordH] = [ed.offsetToPos(from), ed.offsetToPos(to)];
+          toSelect = ed.getRange(wordA, wordH);
+        } else {
+          const { length } = ed.getValue();
+          if (length === 0) {
+            // Empty doc
+            const start = { line: 0, ch: 0 };
+            return { toSelect: "", wordA: start, wordH: start };
+          } else if (cursorOff < length) {
+            [wordA, wordH] = [cursor, ed.offsetToPos(cursorOff + 1)];
+            toSelect = ed.getRange(wordA, wordH);
+          } else {
+            // cursor at end of document
+            [wordA, wordH] = [ed.offsetToPos(cursorOff - 1), cursor];
+            toSelect = ed.getRange(wordA, wordH);
+          }
+        }
       } else {
         throw new Error("Cannot determine if cm5 or cm6");
       }

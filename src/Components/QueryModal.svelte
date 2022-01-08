@@ -24,8 +24,8 @@
       flags: flagsEl.value,
       regexQ: regexQEl.checked,
     };
-    plugin.selectInstance(ed, false, "All", q);
     modal.close();
+    plugin.selectInstance(ed, false, "All", q);
     plugin.settings.lastQ = q;
     await plugin.saveSettings();
   }
